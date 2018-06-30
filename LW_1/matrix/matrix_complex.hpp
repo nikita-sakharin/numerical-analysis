@@ -30,23 +30,25 @@ private:
     std::vector<row_type> matrix;
 
 public:
-    Matrix() = default;
+    Matrix() noexcept = default;
     Matrix(size_type, size_type);
     Matrix(size_type, size_type, const value_type &);
     Matrix(const Matrix &) = default;
-    Matrix(Matrix &&) = default;
+    Matrix(Matrix &&) noexcept = default;
     Matrix &operator =(const Matrix &) = default;
     Matrix &operator =(Matrix &&) = default;
     ~Matrix() = default;
 
-    size_type size1() const;
-    size_type size2() const;
+    size_type size1() const noexcept;
+    size_type size2() const noexcept;
     void resize(size_type, size_type);
     reference operator ()(size_type, size_type);
     const_reference operator ()(size_type, size_type) const;
+    reference operator ()(size_type);
+    const_reference operator ()(size_type) const;
 
-    void zero(size_type, size_type);
-    void identity(size_type);
+    Matrix &zero(size_type, size_type);
+    Matrix &identity(size_type);
 
     template <typename S>
     friend Matrix<std::complex<S>> transpose(const Matrix<std::complex<S>> &);
@@ -63,10 +65,10 @@ public:
     friend Matrix<std::complex<S>> operator *(const Matrix<std::complex<S>> &, const typename Matrix<std::complex<S>>::value_type &);
     template <typename S>
     friend Matrix<std::complex<S>> operator *(const typename Matrix<std::complex<S>>::value_type &, const Matrix<std::complex<S>> &);
-    Matrix &operator *=(const value_type &);
+    Matrix &operator *=(const value_type &) noexcept;
     template <typename S>
     friend Matrix<std::complex<S>> operator /(const Matrix<std::complex<S>> &, const typename Matrix<std::complex<S>>::value_type &);
-    Matrix &operator /=(const value_type &);
+    Matrix &operator /=(const value_type &) noexcept;
 
     template <typename S>
     friend Matrix<std::complex<S>> operator +(const Matrix<std::complex<S>> &, const Matrix<std::complex<S>> &);
@@ -100,15 +102,22 @@ Matrix<std::complex<T>>::Matrix(const Matrix<std::complex<T>>::size_type row,
 }
 
 template <typename T>
-typename Matrix<std::complex<T>>::size_type Matrix<std::complex<T>>::size1() const
+typename Matrix<std::complex<T>>::size_type Matrix<std::complex<T>>::size1() const noexcept
 {
     return matrix.size();
 }
 
 template <typename T>
-typename Matrix<std::complex<T>>::size_type Matrix<std::complex<T>>::size2() const
+typename Matrix<std::complex<T>>::size_type Matrix<std::complex<T>>::size2() const noexcept
 {
-    return matrix.front().size();
+    if (matrix.size())
+    {
+        return matrix.front().size();
+    }
+    else
+    {
+        return 0u;
+    }
 }
 
 template <typename T>
@@ -136,19 +145,57 @@ typename Matrix<std::complex<T>>::const_reference Matrix<std::complex<T>>::opera
 }
 
 template <typename T>
-void Matrix<std::complex<T>>::zero(const Matrix<std::complex<T>>::size_type row_cnt, const Matrix<std::complex<T>>::size_type column_cnt)
+typename Matrix<std::complex<T>>::reference Matrix<std::complex<T>>::operator ()(const Matrix<std::complex<T>>::size_type i)
 {
-    matrix.assign(row_cnt, row_type(column_cnt));
+    if (matrix.size() == 1u)
+    {
+        return matrix[0u].at(i);
+    }
+    else if (matrix.at(0u).size() == 1u)
+    {
+        return matrix.at(i)[0u];
+    }
+    else
+    {
+        throw std::domain_error("Matrices can't be summed");
+    }
 }
 
 template <typename T>
-void Matrix<std::complex<T>>::identity(const Matrix<std::complex<T>>::size_type order)
+typename Matrix<std::complex<T>>::const_reference Matrix<std::complex<T>>::operator ()(const Matrix<std::complex<T>>::size_type i) const
+{
+    if (matrix.size() == 1u)
+    {
+        return matrix[0u].at(i);
+    }
+    else if (matrix.at(0u).size() == 1u)
+    {
+        return matrix.at(i)[0u];
+    }
+    else
+    {
+        throw std::domain_error("Matrices can't be summed");
+    }
+}
+
+template <typename T>
+Matrix<std::complex<T>> &Matrix<std::complex<T>>::zero(const Matrix<std::complex<T>>::size_type row_cnt,
+    const Matrix<std::complex<T>>::size_type column_cnt)
+{
+    matrix.assign(row_cnt, row_type(column_cnt));
+    return *this;
+}
+
+template <typename T>
+Matrix<std::complex<T>> &Matrix<std::complex<T>>::identity(const Matrix<std::complex<T>>::size_type order)
 {
     matrix.assign(order, row_type(order));
     for (size_type i = 0u; i < order; ++i)
     {
         matrix[i][i] = 1.0;
     }
+
+    return *this;
 }
 
 template <typename T>
@@ -256,7 +303,7 @@ Matrix<std::complex<T>> operator *(const typename Matrix<std::complex<T>>::value
 }
 
 template <typename T>
-Matrix<std::complex<T>> &Matrix<std::complex<T>>::operator *=(const Matrix<std::complex<T>>::value_type &value)
+Matrix<std::complex<T>> &Matrix<std::complex<T>>::operator *=(const Matrix<std::complex<T>>::value_type &value) noexcept
 {
     const size_type m = matrix.size(), n = matrix.front().size();
     for (size_type i = 0u; i < m; ++i)
@@ -279,7 +326,7 @@ Matrix<std::complex<T>> operator /(const Matrix<std::complex<T>> &lhs, const typ
 }
 
 template <typename T>
-Matrix<std::complex<T>> &Matrix<std::complex<T>>::operator /=(const Matrix<std::complex<T>>::value_type &value)
+Matrix<std::complex<T>> &Matrix<std::complex<T>>::operator /=(const Matrix<std::complex<T>>::value_type &value) noexcept
 {
     if (std::isless(std::fabs(value), value_epsilon))
     {

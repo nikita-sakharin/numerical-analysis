@@ -33,23 +33,25 @@ private:
     std::vector<row_type> matrix;
 
 public:
-    Matrix() = default;
+    Matrix() noexcept = default;
     Matrix(size_type, size_type);
     Matrix(size_type, size_type, const value_type &);
     Matrix(const Matrix &) = default;
-    Matrix(Matrix &&) = default;
+    Matrix(Matrix &&) noexcept = default;
     Matrix &operator =(const Matrix &) = default;
     Matrix &operator =(Matrix &&) = default;
     ~Matrix() = default;
 
-    size_type size1() const;
-    size_type size2() const;
+    size_type size1() const noexcept;
+    size_type size2() const noexcept;
     void resize(size_type, size_type);
     reference operator ()(size_type, size_type);
     const_reference operator ()(size_type, size_type) const;
+    reference operator ()(size_type);
+    const_reference operator ()(size_type) const;
 
-    void zero(size_type, size_type);
-    void identity(size_type);
+    Matrix &zero(size_type, size_type);
+    Matrix &identity(size_type);
 
     template <typename S>
     friend Matrix<S> transpose(const Matrix<S> &);
@@ -66,10 +68,10 @@ public:
     friend Matrix<S> operator *(const Matrix<S> &, const typename Matrix<S>::value_type &);
     template <typename S>
     friend Matrix<S> operator *(const typename Matrix<S>::value_type &, const Matrix<S> &);
-    Matrix &operator *=(const value_type &);
+    Matrix &operator *=(const value_type &) noexcept;
     template <typename S>
     friend Matrix<S> operator /(const Matrix<S> &, const typename Matrix<S>::value_type &);
-    Matrix &operator /=(const value_type &);
+    Matrix &operator /=(const value_type &) noexcept;
 
     template <typename S>
     friend Matrix<S> operator +(const Matrix<S> &, const Matrix<S> &);
@@ -103,15 +105,22 @@ Matrix<T>::Matrix(const Matrix<T>::size_type row,
 }
 
 template <typename T>
-typename Matrix<T>::size_type Matrix<T>::size1() const
+typename Matrix<T>::size_type Matrix<T>::size1() const noexcept
 {
     return matrix.size();
 }
 
 template <typename T>
-typename Matrix<T>::size_type Matrix<T>::size2() const
+typename Matrix<T>::size_type Matrix<T>::size2() const noexcept
 {
-    return matrix.front().size();
+    if (matrix.size())
+    {
+        return matrix.front().size();
+    }
+    else
+    {
+        return 0u;
+    }
 }
 
 template <typename T>
@@ -128,30 +137,68 @@ template <typename T>
 typename Matrix<T>::reference Matrix<T>::operator ()(const Matrix<T>::size_type i,
     const Matrix<T>::size_type j)
 {
-    return matrix[i][j];
+    return matrix.at(i).at(j);
 }
 
 template <typename T>
 typename Matrix<T>::const_reference Matrix<T>::operator ()(const Matrix<T>::size_type i,
     const Matrix<T>::size_type j) const
 {
-    return matrix[i][j];
+    return matrix.at(i).at(j);
 }
 
 template <typename T>
-void Matrix<T>::zero(const Matrix<T>::size_type row_cnt, const Matrix<T>::size_type column_cnt)
+typename Matrix<T>::reference Matrix<T>::operator ()(const Matrix<T>::size_type i)
+{
+    if (matrix.size() == 1u)
+    {
+        return matrix[0u].at(i);
+    }
+    else if (matrix.at(0u).size() == 1u)
+    {
+        return matrix.at(i)[0u];
+    }
+    else
+    {
+        throw std::domain_error("Is't vector");
+    }
+}
+
+template <typename T>
+typename Matrix<T>::const_reference Matrix<T>::operator ()(const Matrix<T>::size_type i) const
+{
+    if (matrix.size() == 1u)
+    {
+        return matrix[0u].at(i);
+    }
+    else if (matrix.at(0u).size() == 1u)
+    {
+        return matrix.at(i)[0u];
+    }
+    else
+    {
+        throw std::domain_error("Is't vector");
+    }
+}
+
+template <typename T>
+Matrix<T> &Matrix<T>::zero(const Matrix<T>::size_type row_cnt,
+    const Matrix<T>::size_type column_cnt)
 {
     matrix.assign(row_cnt, row_type(column_cnt));
+    return *this;
 }
 
 template <typename T>
-void Matrix<T>::identity(const Matrix<T>::size_type order)
+Matrix<T> &Matrix<T>::identity(const Matrix<T>::size_type order)
 {
     matrix.assign(order, row_type(order));
     for (size_type i = 0u; i < order; ++i)
     {
         matrix[i][i] = 1.0;
     }
+
+    return *this;
 }
 
 template <typename T>
@@ -259,7 +306,7 @@ Matrix<T> operator *(const typename Matrix<T>::value_type &value, const Matrix<T
 }
 
 template <typename T>
-Matrix<T> &Matrix<T>::operator *=(const Matrix<T>::value_type &value)
+Matrix<T> &Matrix<T>::operator *=(const Matrix<T>::value_type &value) noexcept
 {
     const size_type m = matrix.size(), n = matrix.front().size();
     for (size_type i = 0u; i < m; ++i)
@@ -282,7 +329,7 @@ Matrix<T> operator /(const Matrix<T> &lhs, const typename Matrix<T>::value_type 
 }
 
 template <typename T>
-Matrix<T> &Matrix<T>::operator /=(const Matrix<T>::value_type &value)
+Matrix<T> &Matrix<T>::operator /=(const Matrix<T>::value_type &value) noexcept
 {
     if (std::isless(std::fabs(value), value_epsilon))
     {

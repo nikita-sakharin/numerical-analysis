@@ -2,7 +2,7 @@ CC=g++
 CFLAGS=-std=c++14 -Werror -pedantic -Wall -Wextra -O3
 LDFLAGS=
 LIBS=-lm
-SOURCES=LW_1_1.cpp LW_1_2.cpp LW_1_3.cpp LW_1_4.cpp LW_1_5.cpp
+SOURCES=LW_2_1.cpp LW_2_2.cpp
 EXECUTABLE=$(SOURCES:%.cpp=%)
 
 all: $(EXECUTABLE)

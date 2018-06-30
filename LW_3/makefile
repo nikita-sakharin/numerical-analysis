@@ -1,8 +1,8 @@
 CC=g++
-CFLAGS=-std=c++14 -Werror -pedantic -Wall -Wextra -O3
+CFLAGS=-std=c++17 -Werror -pedantic -Wall -Wextra -O3 -Os
 LDFLAGS=
 LIBS=-lm
-SOURCES=LW_1_1.cpp LW_1_2.cpp LW_1_3.cpp LW_1_4.cpp LW_1_5.cpp
+SOURCES=LW_3_1.cpp LW_3_2.cpp LW_3_3.cpp LW_3_4.cpp LW_3_5.cpp
 EXECUTABLE=$(SOURCES:%.cpp=%)
 
 all: $(EXECUTABLE)
@@ -12,5 +12,3 @@ $(EXECUTABLE): %: %.cpp
 
 clean:
 	rm -frd $(EXECUTABLE)
-
-
