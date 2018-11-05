@@ -4,8 +4,6 @@
 #include <iostream>
 #include <stdexcept>
 
-#include <limits>
-
 #include "../generic/header.hpp"
 #include "parabolic_pde.hpp"
 
