@@ -7,9 +7,9 @@
 #include "../generic/header.hpp"
 #include "hyperbolic_pde.hpp"
 
-static constexpr ldbl u_0_t(const ldbl &, const ldbl &, const ldbl &, const ldbl &) noexcept;
-static constexpr ldbl u_l_t(const ldbl &, const ldbl &, const ldbl &, const ldbl &) noexcept;
-static constexpr ldbl u_x_0(const ldbl &, const ldbl &, const ldbl &, const ldbl &) noexcept;
+static constexpr ldbl phi_0_t(const ldbl &, const ldbl &, const ldbl &, const ldbl &) noexcept;
+static constexpr ldbl phi_l_t(const ldbl &, const ldbl &, const ldbl &, const ldbl &) noexcept;
+static constexpr ldbl psi_x(const ldbl &, const ldbl &, const ldbl &, const ldbl &) noexcept;
 static constexpr ldbl u_exact(const ldbl &, const ldbl &, const ldbl &,
     const ldbl &, const ldbl &) noexcept;
 
@@ -34,11 +34,11 @@ int main()
         std::cin >> a >> b >> c >> t >> n >> k;
         const ublas::vector<ldbl>
             explicit_fdm_w = explicit_fdm<ldbl>(a, b, c,
-                L, n, t, k, ALPHA, BETA, GAMMA, DELTA, u_0_t, u_l_t, u_x_0),
+                L, n, t, k, ALPHA, BETA, GAMMA, DELTA, phi_0_t, phi_l_t, psi_x),
             implicit_fdm_w = implicit_fdm<ldbl>(a, b, c,
-                L, n, t, k, ALPHA, BETA, GAMMA, DELTA, u_0_t, u_l_t, u_x_0),
+                L, n, t, k, ALPHA, BETA, GAMMA, DELTA, phi_0_t, phi_l_t, psi_x),
             crank_nicolson_w = crank_nicolson<ldbl>(a, b, c,
-                L, n, t, k, ALPHA, BETA, GAMMA, DELTA, u_0_t, u_l_t, u_x_0);
+                L, n, t, k, ALPHA, BETA, GAMMA, DELTA, phi_0_t, phi_l_t, psi_x);
         const ldbl h = L / n;
         for (std::size_t i = 0; i < explicit_fdm_w.size(); ++i)
         {
@@ -54,17 +54,17 @@ int main()
     return 0;
 }
 
-static constexpr ldbl u_0_t(const ldbl &a, const ldbl &b, const ldbl &c, const ldbl &t) noexcept
+static constexpr ldbl phi_0_t(const ldbl &a, const ldbl &b, const ldbl &c, const ldbl &t) noexcept
 {
     return std::exp((c - a) * t) * (std::cos(b * t) + std::sin(b * t));
 }
 
-static constexpr ldbl u_l_t(const ldbl &a, const ldbl &b, const ldbl &c, const ldbl &t) noexcept
+static constexpr ldbl phi_l_t(const ldbl &a, const ldbl &b, const ldbl &c, const ldbl &t) noexcept
 {
     return -std::exp((c - a) * t) * (std::cos(b * t) + std::sin(b * t));
 }
 
-static constexpr ldbl u_x_0(const ldbl &, const ldbl &, const ldbl &, const ldbl &x) noexcept
+static constexpr ldbl psi_x(const ldbl &, const ldbl &, const ldbl &, const ldbl &x) noexcept
 {
     return std::sin(x);
 }
@@ -75,17 +75,17 @@ static constexpr ldbl u_exact(const ldbl &a, const ldbl &b, const ldbl &c,
     return std::exp((c - a) * t) * std::sin(x + b * t);
 }
 /*
-static constexpr ldbl u_0_t(const ldbl &a, const ldbl &, const ldbl &, const ldbl &t) noexcept
+static constexpr ldbl phi_0_t(const ldbl &a, const ldbl &, const ldbl &, const ldbl &t) noexcept
 {
     return std::exp(-a * t);
 }
 
-static constexpr ldbl u_l_t(const ldbl &a, const ldbl &, const ldbl &, const ldbl &t) noexcept
+static constexpr ldbl phi_l_t(const ldbl &a, const ldbl &, const ldbl &, const ldbl &t) noexcept
 {
     return -std::exp(-a * t);
 }
 
-static constexpr ldbl u_x_0(const ldbl &, const ldbl &, const ldbl &, const ldbl &x) noexcept
+static constexpr ldbl psi_x(const ldbl &, const ldbl &, const ldbl &, const ldbl &x) noexcept
 {
     return std::cos(x);
 }

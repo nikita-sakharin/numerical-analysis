@@ -6,15 +6,13 @@
 #include <limits>
 #include <type_traits>
 
-#include <boost/numeric/ublas/matrix.hpp>
-#include <boost/numeric/ublas/matrix_proxy.hpp>
 #include <boost/numeric/ublas/operation.hpp>
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/vector_proxy.hpp>
 
 #include "../generic/thomas_algorithm.hpp"
 
-static constexpr std::size_t THREE = 2U;
+static constexpr std::size_t THREE = 3U;
 
 template<typename T,
     typename = std::enable_if<std::is_floating_point<T>::value>>
@@ -40,9 +38,9 @@ ublas::vector<T> explicit_fdm(const T a, const T b, const T c,
     const T t, const std::size_t k_upper,
     const T alpha, const T beta,
     const T gamma, const T delta,
-    const std::function<T (const T &, const T &, const T &, const T &)> &u_0_t,
-    const std::function<T (const T &, const T &, const T &, const T &)> &u_l_t,
-    const std::function<T (const T &, const T &, const T &, const T &)> &u_x_0)
+    const std::function<T (const T &, const T &, const T &, const T &)> &phi_0_t,
+    const std::function<T (const T &, const T &, const T &, const T &)> &phi_l_t,
+    const std::function<T (const T &, const T &, const T &, const T &)> &psi_x)
 {
     static constexpr T EPSILON = std::numeric_limits<T>::epsilon();
     const T h = l / n_upper, tau = t / k_upper, sigma = a * a * tau * tau / (h * h);
@@ -54,7 +52,7 @@ ublas::vector<T> explicit_fdm(const T a, const T b, const T c,
     ublas::vector<ublas::vector<T>> w_h_tau(THREE, ublas::vector<T>(n_upper + 1));
     for (std::size_t j = 0; j <= n_upper; ++j)
     {
-        w_h_tau[0][j] = u_x_0(a, b, c, j * h);
+        w_h_tau[0][j] = psi_x(a, b, c, j * h);
         w_h_tau[1][j] = ;
     }
     for (std::size_t k = 1; k <= k_upper; ++k)
@@ -70,9 +68,9 @@ ublas::vector<T> explicit_fdm(const T a, const T b, const T c,
                 c * tau * u_k_minus_1[j];
         }
         u_k[0] = -alpha / (beta * h - alpha) * u_k[1]
-            + u_0_t(a, b, c, k * tau) * h / (beta * h - alpha);
+            + phi_0_t(a, b, c, k * tau) * h / (beta * h - alpha);
         u_k[n_upper] = gamma / (delta * h + gamma) * u_k[n_upper - 1]
-            + u_l_t(a, b, c, k * tau) * h / (delta * h + gamma);
+            + phi_l_t(a, b, c, k * tau) * h / (delta * h + gamma);
     }
 
     return w_h_tau[k_upper % TWO];
@@ -84,9 +82,9 @@ ublas::vector<T> implicit_fdm(const T a, const T b, const T c,
     const T t, const std::size_t k_upper,
     const T alpha, const T beta,
     const T gamma, const T delta,
-    const std::function<T (const T &, const T &, const T &, const T &)> &u_0_t,
-    const std::function<T (const T &, const T &, const T &, const T &)> &u_l_t,
-    const std::function<T (const T &, const T &, const T &, const T &)> &u_x_0)
+    const std::function<T (const T &, const T &, const T &, const T &)> &phi_0_t,
+    const std::function<T (const T &, const T &, const T &, const T &)> &phi_l_t,
+    const std::function<T (const T &, const T &, const T &, const T &)> &psi_x)
 {
     static constexpr T EPSILON = std::numeric_limits<T>::epsilon();
     const T h = l / n_upper, tau = t / k_upper, sigma = a * a * tau / (h * h);
@@ -107,14 +105,14 @@ ublas::vector<T> implicit_fdm(const T a, const T b, const T c,
     ublas::vector<ublas::vector<T>> w_h_tau(TWO, ublas::vector<T>(n_upper + 1));
     for (std::size_t j = 0; j <= n_upper; ++j)
     {
-        w_h_tau[0][j] = u_x_0(a, b, c, j * h);
+        w_h_tau[0][j] = psi_x(a, b, c, j * h);
     }
     for (std::size_t k = 1; k <= k_upper; ++k)
     {
         ublas::vector<T> &u_k = w_h_tau[k % TWO],
             &u_k_minus_1 = w_h_tau[(k - 1) % TWO];
-        d_j[0] = u_0_t(a, b, c, k * tau) * h;
-        d_j[n_upper] = u_l_t(a, b, c, k * tau) * h;
+        d_j[0] = phi_0_t(a, b, c, k * tau) * h;
+        d_j[n_upper] = phi_l_t(a, b, c, k * tau) * h;
         for (std::size_t j = 1; j < n_upper; ++j)
         {
             d_j[j] = -u_k_minus_1[j];
