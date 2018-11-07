@@ -168,11 +168,9 @@ ublas::vector<T> crank_nicolson(const T a, const T b, const T c,
         d_j[n_upper] = phi_l_t(a, b, c, k * tau) * h;
         for (std::size_t j = 1; j < n_upper; ++j)
         {
-
             d_j[j] = (THETA - 1.0) * (sigma + b * tau / (2.0 * h)) * u_k_minus_1[j + 1] +
                 ((THETA - 1.0) * (c * tau - 2.0 * sigma) - 1.0) * u_k_minus_1[j] +
                 (THETA - 1.0) * (sigma - b * tau / (2.0 * h)) * u_k_minus_1[j - 1];
-
         }
         u_k = thomas_algorithm(a_j, b_j, c_j, d_j);
     }
