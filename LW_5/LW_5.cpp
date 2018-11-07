@@ -7,9 +7,12 @@
 #include "../generic/header.hpp"
 #include "parabolic_pde.hpp"
 
-static constexpr ldbl phi_0_t(const ldbl &, const ldbl &, const ldbl &, const ldbl &) noexcept;
-static constexpr ldbl phi_l_t(const ldbl &, const ldbl &, const ldbl &, const ldbl &) noexcept;
-static constexpr ldbl psi_x(const ldbl &, const ldbl &, const ldbl &, const ldbl &) noexcept;
+static constexpr ldbl phi_0_t(const ldbl &, const ldbl &, const ldbl &,
+    const ldbl &) noexcept;
+static constexpr ldbl phi_l_t(const ldbl &, const ldbl &, const ldbl &,
+    const ldbl &) noexcept;
+static constexpr ldbl psi_x(const ldbl &, const ldbl &, const ldbl &,
+    const ldbl &) noexcept;
 static constexpr ldbl u_exact(const ldbl &, const ldbl &, const ldbl &,
     const ldbl &, const ldbl &) noexcept;
 
@@ -54,17 +57,20 @@ int main()
     return 0;
 }
 
-static constexpr ldbl phi_0_t(const ldbl &a, const ldbl &b, const ldbl &c, const ldbl &t) noexcept
+static constexpr ldbl phi_0_t(const ldbl &a, const ldbl &b, const ldbl &c,
+    const ldbl &t) noexcept
 {
     return std::exp((c - a) * t) * (std::cos(b * t) + std::sin(b * t));
 }
 
-static constexpr ldbl phi_l_t(const ldbl &a, const ldbl &b, const ldbl &c, const ldbl &t) noexcept
+static constexpr ldbl phi_l_t(const ldbl &a, const ldbl &b, const ldbl &c,
+    const ldbl &t) noexcept
 {
     return -std::exp((c - a) * t) * (std::cos(b * t) + std::sin(b * t));
 }
 
-static constexpr ldbl psi_x(const ldbl &, const ldbl &, const ldbl &, const ldbl &x) noexcept
+static constexpr ldbl psi_x(const ldbl &, const ldbl &, const ldbl &,
+    const ldbl &x) noexcept
 {
     return std::sin(x);
 }
@@ -75,17 +81,20 @@ static constexpr ldbl u_exact(const ldbl &a, const ldbl &b, const ldbl &c,
     return std::exp((c - a) * t) * std::sin(x + b * t);
 }
 /*
-static constexpr ldbl phi_0_t(const ldbl &a, const ldbl &, const ldbl &, const ldbl &t) noexcept
+static constexpr ldbl phi_0_t(const ldbl &a, const ldbl &, const ldbl &,
+    const ldbl &t) noexcept
 {
     return std::exp(-a * t);
 }
 
-static constexpr ldbl phi_l_t(const ldbl &a, const ldbl &, const ldbl &, const ldbl &t) noexcept
+static constexpr ldbl phi_l_t(const ldbl &a, const ldbl &, const ldbl &,
+    const ldbl &t) noexcept
 {
     return -std::exp(-a * t);
 }
 
-static constexpr ldbl psi_x(const ldbl &, const ldbl &, const ldbl &, const ldbl &x) noexcept
+static constexpr ldbl psi_x(const ldbl &, const ldbl &, const ldbl &,
+    const ldbl &x) noexcept
 {
     return std::cos(x);
 }
