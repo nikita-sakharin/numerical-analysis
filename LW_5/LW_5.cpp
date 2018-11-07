@@ -33,18 +33,18 @@ int main()
         std::size_t n, k;
         std::cin >> a >> b >> c >> t >> n >> k;
         const ublas::vector<ldbl>
-            explicit_fdm_w = explicit_fdm<ldbl>(a, b, c,
+            explicit_fdm_u = explicit_fdm<ldbl>(a, b, c,
                 L, n, t, k, ALPHA, BETA, GAMMA, DELTA, phi_0_t, phi_l_t, psi_x),
-            implicit_fdm_w = implicit_fdm<ldbl>(a, b, c,
+            implicit_fdm_u = implicit_fdm<ldbl>(a, b, c,
                 L, n, t, k, ALPHA, BETA, GAMMA, DELTA, phi_0_t, phi_l_t, psi_x),
-            crank_nicolson_w = crank_nicolson<ldbl>(a, b, c,
+            crank_nicolson_u = crank_nicolson<ldbl>(a, b, c,
                 L, n, t, k, ALPHA, BETA, GAMMA, DELTA, phi_0_t, phi_l_t, psi_x);
         const ldbl h = L / n;
-        for (std::size_t i = 0; i < explicit_fdm_w.size(); ++i)
+        for (std::size_t i = 0; i < explicit_fdm_u.size(); ++i)
         {
             std::cout << std::fixed << std::setprecision(18) << i * h << ',' <<
-                u_exact(a, b, c, i * h, t) << ',' << explicit_fdm_w[i] << ',' <<
-                implicit_fdm_w[i] << ',' << crank_nicolson_w[i] << '\n';
+                u_exact(a, b, c, i * h, t) << ',' << explicit_fdm_u[i] << ',' <<
+                implicit_fdm_u[i] << ',' << crank_nicolson_u[i] << '\n';
         }
     } catch (const std::exception &ex)
     {
