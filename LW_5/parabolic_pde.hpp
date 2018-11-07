@@ -69,11 +69,9 @@ ublas::vector<T> explicit_fdm(const T a, const T b, const T c,
             &u_k_minus_1 = w_h_tau[(k - 1) % TWO];
         for (std::size_t j = 1; j < n_upper; ++j)
         {
-            u_k[j] = sigma * u_k_minus_1[j + 1] +
-                (1.0 - 2.0 * sigma) * u_k_minus_1[j] +
-                sigma * u_k_minus_1[j - 1] +
-                b * tau * (u_k_minus_1[j + 1] - u_k_minus_1[j - 1]) / (2.0 * h) +
-                c * tau * u_k_minus_1[j];
+            u_k[j] = (sigma + b * tau / (2.0 * h)) * u_k_minus_1[j + 1] +
+                (1.0 - 2.0 * sigma + c * tau) * u_k_minus_1[j] +
+                (sigma - b * tau / (2.0 * h)) * u_k_minus_1[j - 1];
         }
         u_k[0] = -alpha / (beta * h - alpha) * u_k[1]
             + phi_0_t(a, b, c, k * tau) * h / (beta * h - alpha);
@@ -170,10 +168,11 @@ ublas::vector<T> crank_nicolson(const T a, const T b, const T c,
         d_j[n_upper] = phi_l_t(a, b, c, k * tau) * h;
         for (std::size_t j = 1; j < n_upper; ++j)
         {
-            d_j[j] = -u_k_minus_1[j] + (THETA - 1.0) *
-                (sigma * (u_k_minus_1[j + 1] - 2.0 * u_k_minus_1[j] + u_k_minus_1[j - 1]) +
-                b * tau / (2.0 * h) * (u_k_minus_1[j + 1] - u_k_minus_1[j - 1]) +
-                c * tau * u_k_minus_1[j]);
+
+            d_j[j] = (THETA - 1.0) * (sigma + b * tau / (2.0 * h)) * u_k_minus_1[j + 1] +
+                ((THETA - 1.0) * (c * tau - 2.0 * sigma) - 1.0) * u_k_minus_1[j] +
+                (THETA - 1.0) * (sigma - b * tau / (2.0 * h)) * u_k_minus_1[j - 1];
+
         }
         u_k = thomas_algorithm(a_j, b_j, c_j, d_j);
     }
