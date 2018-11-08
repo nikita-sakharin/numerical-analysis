@@ -49,9 +49,9 @@ int main()
             explicit_fdm_u = explicit_fdm<ldbl>(a, b, c, d, f_x_t,
                 L, n, t, k, ALPHA, BETA, GAMMA, DELTA,
                 phi_0_t, phi_l_t, psi_1_x, psi_2_x),
-            implicit_fdm_u(explicit_fdm_u.size(), 0.0)/* = implicit_fdm<ldbl>(a, b, c, d, f_x_t,
+            implicit_fdm_u = implicit_fdm<ldbl>(a, b, c, d, f_x_t,
                 L, n, t, k, ALPHA, BETA, GAMMA, DELTA,
-                phi_0_t, phi_l_t, psi_1_x, psi_2_x)*/;
+                phi_0_t, phi_l_t, psi_1_x, psi_2_x);
         const ldbl h = L / n;
         for (std::size_t i = 0; i < explicit_fdm_u.size(); ++i)
         {

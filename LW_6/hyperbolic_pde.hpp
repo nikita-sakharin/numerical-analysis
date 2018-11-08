@@ -72,7 +72,7 @@ ublas::vector<T> explicit_fdm(const T a, const T b, const T c, const T d,
                 (2.0 - 2.0 * sigma + c * tau * tau) * u_k_minus_1[j] +
                 (sigma - b * tau * tau / (2.0 * h)) * u_k_minus_1[j - 1] +
                 (d * tau / 2.0 - 1.0) * u_k_minus_2[j] +
-                tau * tau * f_x_t(h * j, tau * (k - 1));
+                tau * tau * f_x_t(j * h, tau * (k - 1));
             u_k[j] /= (1.0 + d * tau / 2.0);
         }
         u_k[0] = -alpha / (beta * h - alpha) * u_k[1]
@@ -104,10 +104,9 @@ ublas::vector<T> implicit_fdm(const T a, const T b, const T c, const T d,
     }
 
     ublas::vector<T> x, d_j(n_upper + 1),
-//        a_j(n_upper + 1, sigma - b * tau / (2.0 * h)),
-        a_j(n_upper + 1, ),
-        b_j(n_upper + 1, c * tau - (1.0 + 2.0 * sigma)),
-        c_j(n_upper + 1, sigma + b * tau / (2.0 * h));
+        a_j(n_upper + 1, sigma - b * tau * tau / (2.0 * h)),
+        b_j(n_upper + 1, c * tau * tau - 2.0 * sigma - 1.0 - d * tau / 2.0),
+        c_j(n_upper + 1, sigma + b * tau * tau / (2.0 * h));
     a_j[0] = c_j[n_upper] = 0.0;
     b_j[0] = beta * h - alpha;
     c_j[0] = alpha;
@@ -117,16 +116,20 @@ ublas::vector<T> implicit_fdm(const T a, const T b, const T c, const T d,
     for (std::size_t j = 0; j <= n_upper; ++j)
     {
         w_h_tau[0][j] = psi_1_x(a, b, c, j * h);
+        w_h_tau[1][j] = w_h_tau[0][j] + psi_2_x(a, b, c, j * h) * tau;
     }
-    for (std::size_t k = 1; k <= k_upper; ++k)
+    for (std::size_t k = 2U; k <= k_upper; ++k)
     {
         ublas::vector<T> &u_k = w_h_tau[k % THREE],
-            &u_k_minus_1 = w_h_tau[(k - 1) % THREE];
+            &u_k_minus_1 = w_h_tau[(k - 1) % THREE],
+            &u_k_minus_2 = w_h_tau[(k - 2U) % THREE];
         d_j[0] = phi_0_t(a, b, c, k * tau) * h;
         d_j[n_upper] = phi_l_t(a, b, c, k * tau) * h;
         for (std::size_t j = 1; j < n_upper; ++j)
         {
-            d_j[j] = -u_k_minus_1[j];
+            d_j[j] = -2.0 * u_k_minus_1[j] +
+                (1.0 - d * tau / 2.0) * u_k_minus_2[j] -
+                tau * tau * f_x_t(j * h, k * tau);
         }
         u_k = thomas_algorithm(a_j, b_j, c_j, d_j);
     }
