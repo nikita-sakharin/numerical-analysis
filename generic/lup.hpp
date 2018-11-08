@@ -18,17 +18,17 @@
 using namespace boost::numeric;
 
 template <typename T,
-    typename = std::enable_if_t<std::is_floating_point<T>::value>>
+    typename = std::enable_if<std::is_floating_point<T>::value>>
 void row_switching(ublas::matrix<T> &,
     const std::size_t, const std::size_t) noexcept;
 
 template <typename T,
-    typename = std::enable_if_t<std::is_floating_point<T>::value>>
+    typename = std::enable_if<std::is_floating_point<T>::value>>
 void row_multiplication(ublas::matrix<T> &,
     const T, const std::size_t) noexcept;
 
 template <typename T,
-    typename = std::enable_if_t<std::is_floating_point<T>::value>>
+    typename = std::enable_if<std::is_floating_point<T>::value>>
 void row_addition(ublas::matrix<T> &,
     const std::size_t, const T, const std::size_t) noexcept;
 

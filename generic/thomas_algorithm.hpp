@@ -14,7 +14,7 @@
 using namespace boost::numeric;
 
 template <typename T,
-    typename = std::enable_if_t<std::is_floating_point<T>::value>>
+    typename = std::enable_if<std::is_floating_point<T>::value>>
 ublas::vector<T> thomas_algorithm(const ublas::vector<T> &,
     const ublas::vector<T> &,
     const ublas::vector<T> &,

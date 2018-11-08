@@ -19,37 +19,37 @@
 using namespace boost::numeric;
 
 template <typename T,
-    typename = std::enable_if_t<std::is_floating_point<T>::value>>
+    typename = std::enable_if<std::is_floating_point<T>::value>>
 ublas::vector<std::complex<T>> qr(const ublas::matrix<T> &, const T &);
 
 template <typename T,
-    typename = std::enable_if_t<std::is_floating_point<T>::value>>
+    typename = std::enable_if<std::is_floating_point<T>::value>>
 static inline void arg_vilid(std::size_t, std::size_t, const T &);
 
 template <typename T,
-    typename = std::enable_if_t<std::is_floating_point<T>::value>>
+    typename = std::enable_if<std::is_floating_point<T>::value>>
 static void find_decomposition(const ublas::matrix<T> &,
     ublas::matrix<T> &, ublas::matrix<T> &) noexcept;
 
 template <typename T,
-    typename = std::enable_if_t<std::is_floating_point<T>::value>>
+    typename = std::enable_if<std::is_floating_point<T>::value>>
 static void householder_matrix(const ublas::vector<T> &, ublas::matrix<T> &) noexcept;
 
 template <typename T,
-    typename = std::enable_if_t<std::is_floating_point<T>::value>>
+    typename = std::enable_if<std::is_floating_point<T>::value>>
 static void get_v(const ublas::matrix<T> &, std::size_t, ublas::vector<T> &) noexcept;
 
 template <typename T,
-    typename = std::enable_if_t<std::is_floating_point<T>::value>>
+    typename = std::enable_if<std::is_floating_point<T>::value>>
 static T criteria(const ublas::matrix<T> &) noexcept;
 
 template <typename T,
-    typename = std::enable_if_t<std::is_floating_point<T>::value>>
+    typename = std::enable_if<std::is_floating_point<T>::value>>
 static void find_root(const ublas::matrix<T> &,
     ublas::vector<std::complex<T>> &, const T &) noexcept;
 
 template <typename T,
-    typename = std::enable_if_t<std::is_floating_point<T>::value>>
+    typename = std::enable_if<std::is_floating_point<T>::value>>
 static std::pair<std::complex<T>, std::complex<T>>
     quadratic_equation(const T &, const T&, const T &) noexcept;
 

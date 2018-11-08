@@ -72,7 +72,7 @@ ublas::vector<T> explicit_fdm(const T a, const T b, const T c, const T d,
                 (2.0 - 2.0 * sigma + c * tau * tau) * u_k_minus_1[j] +
                 (sigma - b * tau * tau / (2.0 * h)) * u_k_minus_1[j - 1] +
                 (d * tau / 2.0 - 1.0) * u_k_minus_2[j] +
-                tau * tau * f_x_t(j * h, tau * (k - 1));
+                tau * tau * f_x_t(j * h, tau * (k + 1));
             u_k[j] /= (1.0 + d * tau / 2.0);
         }
         u_k[0] = -alpha / (beta * h - alpha) * u_k[1]
@@ -97,7 +97,7 @@ ublas::vector<T> implicit_fdm(const T a, const T b, const T c, const T d,
     const std::function<T (const T &, const T &, const T &, const T &)> &psi_2_x)
 {
     static constexpr T EPSILON = std::numeric_limits<T>::epsilon();
-    const T h = l / n_upper, tau = t / k_upper, sigma = a * a * tau / (h * h);
+    const T h = l / n_upper, tau = t / k_upper, sigma = a * a * tau * tau / (h * h);
     if (n_upper < 4U || !k_upper || h < EPSILON || tau < EPSILON)
     {
         throw std::logic_error("n < 4 || !k || h < epsilon || tau < epsilon");
