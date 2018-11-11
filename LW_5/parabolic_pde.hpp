@@ -12,6 +12,13 @@
 
 #include "../generic/thomas_algorithm.hpp"
 
+enum NumDiff : uint
+{
+    TWO_POINT_FIRST_ORDER,
+    TWO_POINT_SECOND_ORDER,
+    THREE_POINT_SECOND_ORDER,
+};
+
 static constexpr std::size_t TWO = 2U;
 
 template<typename T,
@@ -21,7 +28,8 @@ ublas::vector<T> explicit_fdm(const T, const T, const T,
     const T, const T, const T, const T,
     const std::function<T (const T &, const T &, const T &, const T &)> &,
     const std::function<T (const T &, const T &, const T &, const T &)> &,
-    const std::function<T (const T &, const T &, const T &, const T &)> &);
+    const std::function<T (const T &, const T &, const T &, const T &)> &,
+    NumDiff);
 
 template<typename T,
     typename = std::enable_if<std::is_floating_point<T>::value>>
@@ -30,7 +38,8 @@ ublas::vector<T> implicit_fdm(const T, const T, const T,
     const T, const T, const T, const T,
     const std::function<T (const T &, const T &, const T &, const T &)> &,
     const std::function<T (const T &, const T &, const T &, const T &)> &,
-    const std::function<T (const T &, const T &, const T &, const T &)> &);
+    const std::function<T (const T &, const T &, const T &, const T &)> &,
+    NumDiff);
 
 template<typename T,
     typename = std::enable_if<std::is_floating_point<T>::value>>
@@ -39,7 +48,8 @@ ublas::vector<T> crank_nicolson(const T, const T, const T,
     const T, const T, const T, const T,
     const std::function<T (const T &, const T &, const T &, const T &)> &,
     const std::function<T (const T &, const T &, const T &, const T &)> &,
-    const std::function<T (const T &, const T &, const T &, const T &)> &);
+    const std::function<T (const T &, const T &, const T &, const T &)> &,
+    NumDiff);
 
 template<typename T, typename>
 ublas::vector<T> explicit_fdm(const T a, const T b, const T c,
@@ -49,7 +59,8 @@ ublas::vector<T> explicit_fdm(const T a, const T b, const T c,
     const T gamma, const T delta,
     const std::function<T (const T &, const T &, const T &, const T &)> &phi_0_t,
     const std::function<T (const T &, const T &, const T &, const T &)> &phi_l_t,
-    const std::function<T (const T &, const T &, const T &, const T &)> &psi_x)
+    const std::function<T (const T &, const T &, const T &, const T &)> &psi_x,
+    const NumDiff num_diff = TWO_POINT_FIRST_ORDER)
 {
     static constexpr T EPSILON = std::numeric_limits<T>::epsilon();
     const T h = l / n_upper, tau = t / k_upper, sigma = a * a * tau / (h * h);
@@ -73,10 +84,33 @@ ublas::vector<T> explicit_fdm(const T a, const T b, const T c,
                 (1.0 - 2.0 * sigma + c * tau) * u_k_minus_1[j] +
                 (sigma - b * tau / (2.0 * h)) * u_k_minus_1[j - 1];
         }
-        u_k[0] = -alpha / (beta * h - alpha) * u_k[1]
-            + phi_0_t(a, b, c, k * tau) * h / (beta * h - alpha);
-        u_k[n_upper] = gamma / (delta * h + gamma) * u_k[n_upper - 1]
-            + phi_l_t(a, b, c, k * tau) * h / (delta * h + gamma);
+        switch (num_diff)
+        {
+            case TWO_POINT_FIRST_ORDER:
+                u_k[0] =
+                    (-alpha * u_k[1] + phi_0_t(a, b, c, k * tau) * h) /
+                    (beta * h - alpha);
+                u_k[n_upper] =
+                    (gamma * u_k[n_upper - 1] + phi_l_t(a, b, c, k * tau) * h) /
+                    (delta * h + gamma);
+                break;
+            case TWO_POINT_SECOND_ORDER:
+                u_k[0] =
+                    (-alpha * u_k[2U] + 2.0 * phi_0_t(a, b, c, k * tau) * h) /
+                    (2.0 * beta * h - alpha);
+                u_k[n_upper] =
+                    (gamma * u_k[n_upper - 2U] + 2.0 * phi_l_t(a, b, c, k * tau) * h) /
+                    (2.0 * delta * h + gamma);
+                break;
+            case THREE_POINT_SECOND_ORDER:
+                u_k[0] =
+                    (-4.0 * alpha * u_k[1] + alpha * u_k[2U] + 2.0 * phi_0_t(a, b, c, k * tau) * h)
+                    / (beta * h - alpha);
+                u_k[n_upper] = ###
+                    (gamma * u_k[n_upper - 1] + phi_l_t(a, b, c, k * tau) * h) /
+                    (delta * h + gamma);
+                break;
+        }
     }
 
     return w_h_tau[k_upper % TWO];
@@ -90,7 +124,8 @@ ublas::vector<T> implicit_fdm(const T a, const T b, const T c,
     const T gamma, const T delta,
     const std::function<T (const T &, const T &, const T &, const T &)> &phi_0_t,
     const std::function<T (const T &, const T &, const T &, const T &)> &phi_l_t,
-    const std::function<T (const T &, const T &, const T &, const T &)> &psi_x)
+    const std::function<T (const T &, const T &, const T &, const T &)> &psi_x,
+    const NumDiff num_diff = TWO_POINT_FIRST_ORDER)
 {
     static constexpr T EPSILON = std::numeric_limits<T>::epsilon();
     const T h = l / n_upper, tau = t / k_upper, sigma = a * a * tau / (h * h);
@@ -137,7 +172,8 @@ ublas::vector<T> crank_nicolson(const T a, const T b, const T c,
     const T gamma, const T delta,
     const std::function<T (const T &, const T &, const T &, const T &)> &phi_0_t,
     const std::function<T (const T &, const T &, const T &, const T &)> &phi_l_t,
-    const std::function<T (const T &, const T &, const T &, const T &)> &psi_x)
+    const std::function<T (const T &, const T &, const T &, const T &)> &psi_x,
+    const NumDiff num_diff = TWO_POINT_FIRST_ORDER)
 {
     static constexpr T THETA = 0.5, EPSILON = std::numeric_limits<T>::epsilon();
     const T h = l / n_upper, tau = t / k_upper, sigma = a * a * tau / (h * h);

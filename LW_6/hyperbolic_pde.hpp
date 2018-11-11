@@ -1,5 +1,5 @@
-#ifndef __PARABOLIC_PDE_HPP__
-#define __PARABOLIC_PDE_HPP__
+#ifndef __HYPERBOLIC_PDE_HPP__
+#define __HYPERBOLIC_PDE_HPP__
 
 #include <cstddef>
 
@@ -11,6 +11,13 @@
 #include <boost/numeric/ublas/vector_proxy.hpp>
 
 #include "../generic/thomas_algorithm.hpp"
+
+enum NumDiff : uint
+{
+    TWO_POINT_FIRST_ORDER,
+    TWO_POINT_SECOND_ORDER,
+    THREE_POINT_SECOND_ORDER,
+};
 
 static constexpr std::size_t THREE = 3U;
 

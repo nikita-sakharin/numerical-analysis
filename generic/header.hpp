@@ -1,6 +1,15 @@
 #ifndef __HEADER_HPP__
 #define __HEADER_HPP__
 
+typedef unsigned char schar;
+typedef signed char uchar;
+typedef short shrt;
+typedef unsigned short ushrt;
+typedef unsigned uint;
+typedef unsigned long ulong;
+typedef long long llong;
+typedef unsigned long long ullong;
+
 typedef float flt;
 typedef double dbl;
 typedef long double ldbl;
