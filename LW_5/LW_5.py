@@ -2,7 +2,12 @@ import csv
 import matplotlib.pyplot as plt
 import numpy as np
 import os
-from tkinter import *
+import tkinter as tk
+import tkinter.ttk as ttk
+
+values = [u"Двухточечная первого",
+          u"Двухточечная второго",
+          u"Трехточечная второго"]
 
 def LW_5(event):
     input_path = './input_5.txt'
@@ -10,12 +15,13 @@ def LW_5(event):
     try:
         (a, b, c) = (float(entry_a.get()), float(entry_b.get()), float(entry_c.get()))
         (t, n, k) = (float(entry_t.get()), int(entry_n.get()), int(entry_k.get()))
+        num_diff = values.index(combobox.get())
     except ValueError:
         label.configure(text = 'a: float, b: float, c: float, n: int, k: int, t: float')
         return
 
     with open(input_path, 'w') as file:
-        print(a, b, c, t, n, k, file = file)
+        print(a, b, c, t, n, k, num_diff, file = file)
     os.system('./LW_5 < ' + input_path + ' > ' + output_path)
     with open(output_path, 'r') as file:
         reader = csv.reader(file)
@@ -34,39 +40,43 @@ def LW_5(event):
         plt.legend()
         plt.show()
 
-tk = Tk()
+master = tk.Tk()
 
-label = Label(tk, text = 'Введите коэффициенты:')
+label = tk.Label(master, text = 'Введите коэффициенты:')
 label.grid(row = 0, column = 0, columnspan = 6)
 
-Label(tk, text='a = ').grid(row = 1, column = 0)
-entry_a = Entry(tk)
+tk.Label(master, text='a = ').grid(row = 1, column = 0)
+entry_a = tk.Entry(master)
 entry_a.grid(row = 1, column = 1)
 
-Label(tk, text='b = ').grid(row = 1, column = 2)
-entry_b = Entry(tk)
+tk.Label(master, text='b = ').grid(row = 1, column = 2)
+entry_b = tk.Entry(master)
 entry_b.grid(row = 1, column = 3)
 
-Label(tk, text='c = ').grid(row = 1, column = 4)
-entry_c = Entry(tk)
+tk.Label(master, text='c = ').grid(row = 1, column = 4)
+entry_c = tk.Entry(master)
 entry_c.grid(row = 1, column = 5)
 
-Label(tk, text='T = ').grid(row = 2, column = 0)
-entry_t = Entry(tk)
+tk.Label(master, text='T = ').grid(row = 2, column = 0)
+entry_t = tk.Entry(master)
 entry_t.grid(row = 2, column = 1)
 
-Label(tk, text='N = ').grid(row = 2, column = 2)
-entry_n = Entry(tk)
+tk.Label(master, text='N = ').grid(row = 2, column = 2)
+entry_n = tk.Entry(master)
 entry_n.grid(row = 2, column = 3)
 
-Label(tk, text='K = ').grid(row = 2, column = 4)
-entry_k = Entry(tk)
+tk.Label(master, text='K = ').grid(row = 2, column = 4)
+entry_k = tk.Entry(master)
 entry_k.grid(row = 2, column = 5)
 
-button_apply = Button(tk, text = 'Построить график')
-button_apply.grid(row = 3, column = 0, columnspan = 6)
+combobox = ttk.Combobox(master, values = values)
+combobox.set(values[0])
+combobox.grid(row = 3, column = 0, columnspan = 6)
+
+button_apply = tk.Button(master, text = 'Построить график')
+button_apply.grid(row = 4, column = 0, columnspan = 6)
 
 button_apply.bind('<Button-1>', LW_5)
-tk.bind('<Return>', LW_5)
+master.bind('<Return>', LW_5)
 
-tk.mainloop()
+master.mainloop()
