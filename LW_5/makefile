@@ -7,7 +7,8 @@ EXECUTABLE=$(SOURCES:%.cpp=%)
 
 TARGET=Debug
 ifeq ($(TARGET), Debug)
-	CFLAGS+=-Og -g
+	#CFLAGS+=-Og -g
+	CFLAGS+=-g
 else ifeq ($(TARGET), Release)
 	CFLAGS+=-fomit-frame-pointer -fexpensive-optimizations -flto -O3
 	LDFLAGS+=-O3 -flto -s
