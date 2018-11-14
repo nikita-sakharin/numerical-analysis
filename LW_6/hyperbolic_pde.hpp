@@ -30,7 +30,8 @@ ublas::vector<T> explicit_fdm(const T, const T, const T, const T,
     const std::function<T (const T &, const T &, const T &, const T &)> &,
     const std::function<T (const T &, const T &, const T &, const T &)> &,
     const std::function<T (const T &, const T &, const T &, const T &)> &,
-    const std::function<T (const T &, const T &, const T &, const T &)> &);
+    const std::function<T (const T &, const T &, const T &, const T &)> &,
+    NumDiff, NumDiff);
 
 template<typename T,
     typename = std::enable_if<std::is_floating_point<T>::value>>
@@ -41,7 +42,10 @@ ublas::vector<T> implicit_fdm(const T, const T, const T, const T,
     const std::function<T (const T &, const T &, const T &, const T &)> &,
     const std::function<T (const T &, const T &, const T &, const T &)> &,
     const std::function<T (const T &, const T &, const T &, const T &)> &,
-    const std::function<T (const T &, const T &, const T &, const T &)> &);
+    const std::function<T (const T &, const T &, const T &, const T &)> &,
+    NumDiff, NumDiff);
+
+static bool is_enum_includes(NumDiff) noexcept;
 
 template<typename T, typename>
 ublas::vector<T> explicit_fdm(const T a, const T b, const T c, const T d,
@@ -53,11 +57,15 @@ ublas::vector<T> explicit_fdm(const T a, const T b, const T c, const T d,
     const std::function<T (const T &, const T &, const T &, const T &)> &phi_0_t,
     const std::function<T (const T &, const T &, const T &, const T &)> &phi_l_t,
     const std::function<T (const T &, const T &, const T &, const T &)> &psi_1_x,
-    const std::function<T (const T &, const T &, const T &, const T &)> &psi_2_x)
+    const std::function<T (const T &, const T &, const T &, const T &)> &psi_prime_1_x,
+    const std::function<T (const T &, const T &, const T &, const T &)> &psi_prime_prime_1_x,
+    const std::function<T (const T &, const T &, const T &, const T &)> &psi_2_x,
+    const NumDiff initial, const NumDiff boundary)
 {
     static constexpr T EPSILON = std::numeric_limits<T>::epsilon();
     const T h = l / n_upper, tau = t / k_upper, sigma = a * a * tau * tau / (h * h);
-    if (!n_upper || !k_upper || h < EPSILON || tau < EPSILON || sigma >= 1.0)
+    if (!n_upper || !k_upper || h < EPSILON || tau < EPSILON || sigma >= 1.0 ||
+        !is_enum_includes(initial) || !is_enum_includes(boundary))
     {
         throw std::logic_error("!n || !k || h < epsilon || tau < epsilon || sigma >= 1.0");
     }
@@ -66,7 +74,22 @@ ublas::vector<T> explicit_fdm(const T a, const T b, const T c, const T d,
     for (std::size_t j = 0; j <= n_upper; ++j)
     {
         w_h_tau[0][j] = psi_1_x(a, b, c, j * h);
-        w_h_tau[1][j] = w_h_tau[0][j] + psi_2_x(a, b, c, j * h) * tau;
+        switch (initial)
+        {
+            default:
+            case TWO_POINT_FIRST_ORDER:
+                w_h_tau[1][j] = w_h_tau[0][j] + psi_2_x(a, b, c, j * h) * tau;
+                break;
+            case TWO_POINT_SECOND_ORDER:
+                w_h_tau[1][j] = (1.0 + c * tau * tau / 2.0) * w_h_tau[0][j] +
+                    (tau - d * tau * tau / 2.0) * psi_2_x(a, b, c, j * h) +
+                    a * a * tau * tau / 2.0 * psi_prime_prime_1_x(j * h) +
+                    b * tau * tau / 2.0 * psi_prime_1_x(j * h) +
+                    tau * tau / 2.0 * f_x_t(j * h, 0.0);
+                break;
+            case THREE_POINT_SECOND_ORDER:
+                throw std::logic_error("initial: THREE_POINT_SECOND_ORDER");
+        }
     }
     for (std::size_t k = 2U; k <= k_upper; ++k)
     {
@@ -101,11 +124,15 @@ ublas::vector<T> implicit_fdm(const T a, const T b, const T c, const T d,
     const std::function<T (const T &, const T &, const T &, const T &)> &phi_0_t,
     const std::function<T (const T &, const T &, const T &, const T &)> &phi_l_t,
     const std::function<T (const T &, const T &, const T &, const T &)> &psi_1_x,
-    const std::function<T (const T &, const T &, const T &, const T &)> &psi_2_x)
+    const std::function<T (const T &, const T &, const T &, const T &)> &psi_prime_1_x,
+    const std::function<T (const T &, const T &, const T &, const T &)> &psi_prime_prime_1_x,
+    const std::function<T (const T &, const T &, const T &, const T &)> &psi_2_x,
+    const NumDiff initial, const NumDiff boundary)
 {
     static constexpr T EPSILON = std::numeric_limits<T>::epsilon();
     const T h = l / n_upper, tau = t / k_upper, sigma = a * a * tau * tau / (h * h);
-    if (n_upper < 4U || !k_upper || h < EPSILON || tau < EPSILON)
+    if (n_upper < 4U || !k_upper || h < EPSILON || tau < EPSILON ||
+        !is_enum_includes(initial) || !is_enum_includes(boundary))
     {
         throw std::logic_error("n < 4 || !k || h < epsilon || tau < epsilon");
     }
@@ -123,7 +150,22 @@ ublas::vector<T> implicit_fdm(const T a, const T b, const T c, const T d,
     for (std::size_t j = 0; j <= n_upper; ++j)
     {
         w_h_tau[0][j] = psi_1_x(a, b, c, j * h);
-        w_h_tau[1][j] = w_h_tau[0][j] + psi_2_x(a, b, c, j * h) * tau;
+        switch (initial)
+        {
+            default:
+            case TWO_POINT_FIRST_ORDER:
+                w_h_tau[1][j] = w_h_tau[0][j] + psi_2_x(a, b, c, j * h) * tau;
+                break;
+            case TWO_POINT_SECOND_ORDER:
+                w_h_tau[1][j] = (1.0 + c * tau * tau / 2.0) * w_h_tau[0][j] +
+                    (tau - d * tau * tau / 2.0) * psi_2_x(a, b, c, j * h) +
+                    a * a * tau * tau / 2.0 * psi_prime_prime_1_x(j * h) +
+                    b * tau * tau / 2.0 * psi_prime_1_x(j * h) +
+                    tau * tau / 2.0 * f_x_t(j * h, 0.0);
+                break;
+            case THREE_POINT_SECOND_ORDER:
+                throw std::logic_error("initial: THREE_POINT_SECOND_ORDER");
+        }
     }
     for (std::size_t k = 2U; k <= k_upper; ++k)
     {
@@ -142,6 +184,19 @@ ublas::vector<T> implicit_fdm(const T a, const T b, const T c, const T d,
     }
 
     return w_h_tau[k_upper % THREE];
+}
+
+static bool is_enum_includes(const NumDiff num_diff) noexcept
+{
+    switch (num_diff)
+    {
+        case TWO_POINT_FIRST_ORDER:
+        case TWO_POINT_SECOND_ORDER:
+        case THREE_POINT_SECOND_ORDER:
+            return true;
+        default:
+            return false;
+    }
 }
 
 #endif

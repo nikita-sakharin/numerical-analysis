@@ -34,18 +34,18 @@ int main()
     {
         ldbl a, b, c, t;
         std::size_t n, k;
-        uint num_diff;
-        std::cin >> a >> b >> c >> t >> n >> k >> num_diff;
+        uint boundary;
+        std::cin >> a >> b >> c >> t >> n >> k >> boundary;
         const ublas::vector<ldbl>
             explicit_fdm_u = explicit_fdm<ldbl>(a, b, c,
                 L, n, t, k, ALPHA, BETA, GAMMA, DELTA,
-                phi_0_t, phi_l_t, psi_x, static_cast<NumDiff>(num_diff)),
+                phi_0_t, phi_l_t, psi_x, static_cast<NumDiff>(boundary)),
             implicit_fdm_u = implicit_fdm<ldbl>(a, b, c,
                 L, n, t, k, ALPHA, BETA, GAMMA, DELTA,
-                phi_0_t, phi_l_t, psi_x, static_cast<NumDiff>(num_diff)),
+                phi_0_t, phi_l_t, psi_x, static_cast<NumDiff>(boundary)),
             crank_nicolson_u = crank_nicolson<ldbl>(a, b, c,
                 L, n, t, k, ALPHA, BETA, GAMMA, DELTA,
-                phi_0_t, phi_l_t, psi_x, static_cast<NumDiff>(num_diff));
+                phi_0_t, phi_l_t, psi_x, static_cast<NumDiff>(boundary));
         const ldbl h = L / n;
         for (std::size_t i = 0; i < explicit_fdm_u.size(); ++i)
         {

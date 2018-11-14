@@ -4,18 +4,23 @@ import numpy as np
 import os
 from tkinter import *
 
+values = [u"Двухточечная первого",
+          u"Двухточечная второго",
+          u"Трехточечная второго"]
+
 def LW_6(event):
     input_path = './input_6.txt'
     output_path = './output_6.csv'
     try:
-        (a, b, c, d) = (float(entry_a.get()), float(entry_b.get()), float(entry_c.get()), float(entry_d.get()))
-        (t, n, k) = (float(entry_t.get()), int(entry_n.get()), int(entry_k.get()))
+        a, b, c, d = float(entry_a.get()), float(entry_b.get()), float(entry_c.get()), float(entry_d.get())
+        t, n, k = float(entry_t.get()), int(entry_n.get()), int(entry_k.get())
+        initial, boundary = values.index(combobox_initial.get()), values.index(combobox_boundary.get())
     except ValueError:
         label.configure(text = 'a: float, b: float, c: float, d: float, n: int, k: int, t: float')
         return
 
     with open(input_path, 'w') as file:
-        print(a, b, c, d, t, n, k, file = file)
+        print(a, b, c, d, t, n, k, initial, boundary, file = file)
     os.system('./LW_6 < ' + input_path + ' > ' + output_path)
     with open(output_path, 'r') as file:
         reader = csv.reader(file)
@@ -65,6 +70,16 @@ entry_n.grid(row = 2, column = 3)
 Label(tk, text='K = ').grid(row = 2, column = 4)
 entry_k = Entry(tk)
 entry_k.grid(row = 2, column = 5)
+
+tk.Label(master, text='начальные: ').grid(row = 3, column = 0)
+combobox_initial = ttk.Combobox(master, values = values[:-1])
+combobox_initial.set(values[0])
+combobox_initial.grid(row = 3, column = 1)
+
+tk.Label(master, text='граничные: ').grid(row = 3, column = 3)
+combobox_boundary = ttk.Combobox(master, values = values)
+combobox_boundary.set(values[0])
+combobox_boundary.grid(row = 3, column = 4)
 
 button_apply = Button(tk, text = 'Построить график')
 button_apply.grid(row = 3, column = 0, columnspan = 8)

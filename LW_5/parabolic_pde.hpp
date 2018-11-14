@@ -51,7 +51,7 @@ ublas::vector<T> crank_nicolson(const T, const T, const T,
     const std::function<T (const T &, const T &, const T &, const T &)> &,
     NumDiff);
 
-static bool is_enum_includes(NumDiff) noexcept;
+static bool is_num_diff_includes(NumDiff) noexcept;
 
 template<typename T,
     typename = std::enable_if<std::is_floating_point<T>::value>>
@@ -67,7 +67,7 @@ ublas::vector<T> explicit_fdm(const T a, const T b, const T c,
     const std::function<T (const T &, const T &, const T &, const T &)> &phi_0_t,
     const std::function<T (const T &, const T &, const T &, const T &)> &phi_l_t,
     const std::function<T (const T &, const T &, const T &, const T &)> &psi_x,
-    const NumDiff num_diff)
+    const NumDiff boundary)
 {
     static constexpr T EPSILON = std::numeric_limits<T>::epsilon();
     const T h = l / n_upper, tau = t / k_upper, sigma = a * a * tau / (h * h),
@@ -78,7 +78,7 @@ ublas::vector<T> explicit_fdm(const T a, const T b, const T c,
         b_n = gamma * (2.0 * a * a / h + h / tau - c * h) +
             delta * (2.0 * a * a + b * h);
     if (!n_upper || !k_upper || h < EPSILON || tau < EPSILON || sigma > 0.5 ||
-        !is_enum_includes(num_diff))
+        !is_num_diff_includes(boundary))
     {
         throw std::logic_error("!n || !k || h < epsilon || tau < epsilon || sigma > 0.5");
     }
@@ -98,7 +98,7 @@ ublas::vector<T> explicit_fdm(const T a, const T b, const T c,
                 (1.0 - 2.0 * sigma + c * tau) * u_k_minus_1[j] +
                 (sigma - b * tau / (2.0 * h)) * u_k_minus_1[j - 1];
         }
-        switch (num_diff)
+        switch (boundary)
         {
             default:
             case TWO_POINT_FIRST_ORDER:
@@ -142,12 +142,12 @@ ublas::vector<T> implicit_fdm(const T a, const T b, const T c,
     const std::function<T (const T &, const T &, const T &, const T &)> &phi_0_t,
     const std::function<T (const T &, const T &, const T &, const T &)> &phi_l_t,
     const std::function<T (const T &, const T &, const T &, const T &)> &psi_x,
-    const NumDiff num_diff)
+    const NumDiff boundary)
 {
     static constexpr T EPSILON = std::numeric_limits<T>::epsilon();
     const T h = l / n_upper, tau = t / k_upper, sigma = a * a * tau / (h * h);
     if (n_upper < 4U || !k_upper || h < EPSILON || tau < EPSILON ||
-        !is_enum_includes(num_diff))
+        !is_num_diff_includes(boundary))
     {
         throw std::logic_error("n < 4 || !k || h < epsilon || tau < epsilon");
     }
@@ -157,7 +157,7 @@ ublas::vector<T> implicit_fdm(const T a, const T b, const T c,
         b_j(n_upper + 1, c * tau - 1.0 - 2.0 * sigma),
         c_j(n_upper + 1, sigma + b * tau / (2.0 * h));
     a_j[0] = c_j[n_upper] = 0.0;
-    switch (num_diff)
+    switch (boundary)
     {
         default:
         case TWO_POINT_FIRST_ORDER:
@@ -190,7 +190,7 @@ ublas::vector<T> implicit_fdm(const T a, const T b, const T c,
         {
             d_j[j] = -u_k_minus_1[j];
         }
-        switch (num_diff)
+        switch (boundary)
         {
             default:
             case TWO_POINT_FIRST_ORDER:
@@ -228,12 +228,12 @@ ublas::vector<T> crank_nicolson(const T a, const T b, const T c,
     const std::function<T (const T &, const T &, const T &, const T &)> &phi_0_t,
     const std::function<T (const T &, const T &, const T &, const T &)> &phi_l_t,
     const std::function<T (const T &, const T &, const T &, const T &)> &psi_x,
-    const NumDiff num_diff)
+    const NumDiff boundary)
 {
     static constexpr T THETA = 0.5, EPSILON = std::numeric_limits<T>::epsilon();
     const T h = l / n_upper, tau = t / k_upper, sigma = a * a * tau / (h * h);
     if (n_upper < 4U || !k_upper || h < EPSILON || tau < EPSILON ||
-        !is_enum_includes(num_diff))
+        !is_num_diff_includes(boundary))
     {
         throw std::logic_error("n < 4 || !k || h < epsilon || tau < epsilon");
     }
@@ -243,7 +243,7 @@ ublas::vector<T> crank_nicolson(const T a, const T b, const T c,
         b_j(n_upper + 1, -1.0 + THETA * (c * tau - 2.0 * sigma)),
         c_j(n_upper + 1, THETA * (sigma + b * tau / (2.0 * h)));
     a_j[0] = c_j[n_upper] = 0.0;
-    switch (num_diff)
+    switch (boundary)
     {
         default:
         case TWO_POINT_FIRST_ORDER:
@@ -278,7 +278,7 @@ ublas::vector<T> crank_nicolson(const T a, const T b, const T c,
                 ((THETA - 1.0) * (c * tau - 2.0 * sigma) - 1.0) * u_k_minus_1[j] +
                 (THETA - 1.0) * (sigma - b * tau / (2.0 * h)) * u_k_minus_1[j - 1];
         }
-        switch (num_diff)
+        switch (boundary)
         {
             default:
             case TWO_POINT_FIRST_ORDER:
@@ -307,9 +307,9 @@ ublas::vector<T> crank_nicolson(const T a, const T b, const T c,
     return w_h_tau[k_upper % TWO];
 }
 
-static bool is_enum_includes(const NumDiff num_diff) noexcept
+static bool is_num_diff_includes(const NumDiff boundary) noexcept
 {
-    switch (num_diff)
+    switch (boundary)
     {
         case TWO_POINT_FIRST_ORDER:
         case TWO_POINT_SECOND_ORDER:

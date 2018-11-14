@@ -13,15 +13,15 @@ def LW_5(event):
     input_path = './input_5.txt'
     output_path = './output_5.csv'
     try:
-        (a, b, c) = (float(entry_a.get()), float(entry_b.get()), float(entry_c.get()))
-        (t, n, k) = (float(entry_t.get()), int(entry_n.get()), int(entry_k.get()))
-        num_diff = values.index(combobox.get())
+        a, b, c = (float(entry_a.get()), float(entry_b.get()), float(entry_c.get()))
+        t, n, k = (float(entry_t.get()), int(entry_n.get()), int(entry_k.get()))
+        boundary = values.index(combobox_boundary.get())
     except ValueError:
         label.configure(text = 'a: float, b: float, c: float, n: int, k: int, t: float')
         return
 
     with open(input_path, 'w') as file:
-        print(a, b, c, t, n, k, num_diff, file = file)
+        print(a, b, c, t, n, k, boundary, file = file)
     os.system('./LW_5 < ' + input_path + ' > ' + output_path)
     with open(output_path, 'r') as file:
         reader = csv.reader(file)
@@ -69,9 +69,10 @@ tk.Label(master, text='K = ').grid(row = 2, column = 4)
 entry_k = tk.Entry(master)
 entry_k.grid(row = 2, column = 5)
 
-combobox = ttk.Combobox(master, values = values)
-combobox.set(values[0])
-combobox.grid(row = 3, column = 0, columnspan = 6)
+tk.Label(master, text='граничные: ').grid(row = 3, column = 2)
+combobox_boundary = ttk.Combobox(master, values = values)
+combobox_boundary.set(values[0])
+combobox_boundary.grid(row = 3, column = 3)
 
 button_apply = tk.Button(master, text = 'Построить график')
 button_apply.grid(row = 4, column = 0, columnspan = 6)

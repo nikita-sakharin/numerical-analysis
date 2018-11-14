@@ -14,6 +14,10 @@ static constexpr ldbl phi_l_t(const ldbl &, const ldbl &, const ldbl &,
     const ldbl &) noexcept;
 static constexpr ldbl psi_1_x(const ldbl &, const ldbl &, const ldbl &,
     const ldbl &) noexcept;
+static constexpr ldbl psi_prime_1_x(const ldbl &, const ldbl &, const ldbl &,
+    const ldbl &) noexcept;
+static constexpr ldbl psi_prime_prime_1_x(const ldbl &, const ldbl &, const ldbl &,
+    const ldbl &) noexcept;
 static constexpr ldbl psi_2_x(const ldbl &, const ldbl &, const ldbl &,
     const ldbl &) noexcept;
 static constexpr ldbl u_exact(const ldbl &, const ldbl &, const ldbl &,
@@ -44,14 +48,17 @@ int main()
     {
         ldbl a, b, c, d, t;
         std::size_t n, k;
-        std::cin >> a >> b >> c >> d >> t >> n >> k;
+        uint initial, boundary;
+        std::cin >> a >> b >> c >> d >> t >> n >> k >> initial >> boundary;
         const ublas::vector<ldbl>
             explicit_fdm_u = explicit_fdm<ldbl>(a, b, c, d, f_x_t,
                 L, n, t, k, ALPHA, BETA, GAMMA, DELTA,
-                phi_0_t, phi_l_t, psi_1_x, psi_2_x),
+                phi_0_t, phi_l_t, psi_1_x, psi_prime_1_x, psi_prime_prime_1_x, psi_2_x,
+                static_cast<NumDiff>(initial), static_cast<NumDiff>(boundary)),
             implicit_fdm_u = implicit_fdm<ldbl>(a, b, c, d, f_x_t,
                 L, n, t, k, ALPHA, BETA, GAMMA, DELTA,
-                phi_0_t, phi_l_t, psi_1_x, psi_2_x);
+                phi_0_t, phi_l_t, psi_1_x, psi_prime_1_x, psi_prime_prime_1_x, psi_2_x,
+                static_cast<NumDiff>(initial), static_cast<NumDiff>(boundary));
         const ldbl h = L / n;
         for (std::size_t i = 0; i < explicit_fdm_u.size(); ++i)
         {
@@ -159,6 +166,18 @@ static constexpr ldbl psi_1_x(const ldbl &, const ldbl &, const ldbl &,
     const ldbl &x) noexcept
 {
     return std::exp(-x) * std::cos(x);
+}
+
+static constexpr ldbl psi_prime_1_x(const ldbl &, const ldbl &, const ldbl &,
+    const ldbl &x) noexcept
+{
+    return -std::exp(-x) * (std::sin(x) + std::cos(x));
+}
+
+static constexpr ldbl psi_prime_prime_1_x(const ldbl &, const ldbl &, const ldbl &,
+    const ldbl &x) noexcept
+{
+    return 2.0 * std::exp(-x) * std::sin(x);
 }
 
 static constexpr ldbl psi_2_x(const ldbl &, const ldbl &, const ldbl &,
