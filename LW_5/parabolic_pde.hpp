@@ -51,9 +51,11 @@ ublas::vector<T> crank_nicolson(const T, const T, const T,
     const std::function<T (const T &, const T &, const T &, const T &)> &,
     NumDiff);
 
+static bool is_enum_includes(NumDiff) noexcept;
+
 template<typename T,
     typename = std::enable_if<std::is_floating_point<T>::value>>
-void to_three_diagonal(ublas::vector<T> &, ublas::vector<T> &, ublas::vector<T> &,
+static void to_three_diagonal(ublas::vector<T> &, ublas::vector<T> &, ublas::vector<T> &,
     ublas::vector<T> &, const T, const T) noexcept;
 
 template<typename T, typename>
@@ -75,7 +77,8 @@ ublas::vector<T> explicit_fdm(const T a, const T b, const T c,
         a_n = -2.0 * gamma * a * a / h,
         b_n = gamma * (2.0 * a * a / h + h / tau - c * h) +
             delta * (2.0 * a * a + b * h);
-    if (!n_upper || !k_upper || h < EPSILON || tau < EPSILON || sigma > 0.5)
+    if (!n_upper || !k_upper || h < EPSILON || tau < EPSILON || sigma > 0.5 ||
+        !is_enum_includes(num_diff))
     {
         throw std::logic_error("!n || !k || h < epsilon || tau < epsilon || sigma > 0.5");
     }
@@ -143,7 +146,8 @@ ublas::vector<T> implicit_fdm(const T a, const T b, const T c,
 {
     static constexpr T EPSILON = std::numeric_limits<T>::epsilon();
     const T h = l / n_upper, tau = t / k_upper, sigma = a * a * tau / (h * h);
-    if (n_upper < 4U || !k_upper || h < EPSILON || tau < EPSILON)
+    if (n_upper < 4U || !k_upper || h < EPSILON || tau < EPSILON ||
+        !is_enum_includes(num_diff))
     {
         throw std::logic_error("n < 4 || !k || h < epsilon || tau < epsilon");
     }
@@ -228,7 +232,8 @@ ublas::vector<T> crank_nicolson(const T a, const T b, const T c,
 {
     static constexpr T THETA = 0.5, EPSILON = std::numeric_limits<T>::epsilon();
     const T h = l / n_upper, tau = t / k_upper, sigma = a * a * tau / (h * h);
-    if (n_upper < 4U || !k_upper || h < EPSILON || tau < EPSILON)
+    if (n_upper < 4U || !k_upper || h < EPSILON || tau < EPSILON ||
+        !is_enum_includes(num_diff))
     {
         throw std::logic_error("n < 4 || !k || h < epsilon || tau < epsilon");
     }
@@ -300,6 +305,19 @@ ublas::vector<T> crank_nicolson(const T a, const T b, const T c,
     }
 
     return w_h_tau[k_upper % TWO];
+}
+
+static bool is_enum_includes(const NumDiff num_diff) noexcept
+{
+    switch (num_diff)
+    {
+        case TWO_POINT_FIRST_ORDER:
+        case TWO_POINT_SECOND_ORDER:
+        case THREE_POINT_SECOND_ORDER:
+            return true;
+        default:
+            return false;
+    }
 }
 
 template<typename T,
