@@ -31,6 +31,8 @@ ublas::vector<T> explicit_fdm(const T, const T, const T, const T,
     const std::function<T (const T &, const T &, const T &, const T &)> &,
     const std::function<T (const T &, const T &, const T &, const T &)> &,
     const std::function<T (const T &, const T &, const T &, const T &)> &,
+    const std::function<T (const T &, const T &, const T &, const T &)> &,
+    const std::function<T (const T &, const T &, const T &, const T &)> &,
     NumDiff, NumDiff);
 
 template<typename T,
@@ -39,6 +41,8 @@ ublas::vector<T> implicit_fdm(const T, const T, const T, const T,
     const std::function<T (const T &, const T &)> &,
     const T, std::size_t, const T, std::size_t,
     const T, const T, const T, const T,
+    const std::function<T (const T &, const T &, const T &, const T &)> &,
+    const std::function<T (const T &, const T &, const T &, const T &)> &,
     const std::function<T (const T &, const T &, const T &, const T &)> &,
     const std::function<T (const T &, const T &, const T &, const T &)> &,
     const std::function<T (const T &, const T &, const T &, const T &)> &,
@@ -83,8 +87,8 @@ ublas::vector<T> explicit_fdm(const T a, const T b, const T c, const T d,
             case TWO_POINT_SECOND_ORDER:
                 w_h_tau[1][j] = (1.0 + c * tau * tau / 2.0) * w_h_tau[0][j] +
                     (tau - d * tau * tau / 2.0) * psi_2_x(a, b, c, j * h) +
-                    a * a * tau * tau / 2.0 * psi_prime_prime_1_x(j * h) +
-                    b * tau * tau / 2.0 * psi_prime_1_x(j * h) +
+                    a * a * tau * tau / 2.0 * psi_prime_prime_1_x(a, b, c, j * h) +
+                    b * tau * tau / 2.0 * psi_prime_1_x(a, b, c, j * h) +
                     tau * tau / 2.0 * f_x_t(j * h, 0.0);
                 break;
             case THREE_POINT_SECOND_ORDER:
@@ -159,8 +163,8 @@ ublas::vector<T> implicit_fdm(const T a, const T b, const T c, const T d,
             case TWO_POINT_SECOND_ORDER:
                 w_h_tau[1][j] = (1.0 + c * tau * tau / 2.0) * w_h_tau[0][j] +
                     (tau - d * tau * tau / 2.0) * psi_2_x(a, b, c, j * h) +
-                    a * a * tau * tau / 2.0 * psi_prime_prime_1_x(j * h) +
-                    b * tau * tau / 2.0 * psi_prime_1_x(j * h) +
+                    a * a * tau * tau / 2.0 * psi_prime_prime_1_x(a, b, c, j * h) +
+                    b * tau * tau / 2.0 * psi_prime_1_x(a, b, c, j * h) +
                     tau * tau / 2.0 * f_x_t(j * h, 0.0);
                 break;
             case THREE_POINT_SECOND_ORDER:

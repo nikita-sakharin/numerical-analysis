@@ -2,7 +2,8 @@ import csv
 import matplotlib.pyplot as plt
 import numpy as np
 import os
-from tkinter import *
+import tkinter as tk
+import tkinter.ttk as ttk
 
 values = [u"Двухточечная первого",
           u"Двухточечная второго",
@@ -38,53 +39,53 @@ def LW_6(event):
         plt.legend()
         plt.show()
 
-tk = Tk()
+master = tk.Tk()
 
-label = Label(tk, text = 'Введите коэффициенты:')
+label = tk.Label(master, text = 'Введите коэффициенты:')
 label.grid(row = 0, column = 0, columnspan = 8)
 
-Label(tk, text='a = ').grid(row = 1, column = 0)
-entry_a = Entry(tk)
+tk.Label(master, text='a = ').grid(row = 1, column = 0)
+entry_a = tk.Entry(master)
 entry_a.grid(row = 1, column = 1)
 
-Label(tk, text='b = ').grid(row = 1, column = 2)
-entry_b = Entry(tk)
+tk.Label(master, text='b = ').grid(row = 1, column = 2)
+entry_b = tk.Entry(master)
 entry_b.grid(row = 1, column = 3)
 
-Label(tk, text='c = ').grid(row = 1, column = 4)
-entry_c = Entry(tk)
+tk.Label(master, text='c = ').grid(row = 1, column = 4)
+entry_c = tk.Entry(master)
 entry_c.grid(row = 1, column = 5)
 
-Label(tk, text='d = ').grid(row = 1, column = 6)
-entry_d = Entry(tk)
+tk.Label(master, text='d = ').grid(row = 1, column = 6)
+entry_d = tk.Entry(master)
 entry_d.grid(row = 1, column = 7)
 
-Label(tk, text='T = ').grid(row = 2, column = 0)
-entry_t = Entry(tk)
+tk.Label(master, text='T = ').grid(row = 2, column = 0)
+entry_t = tk.Entry(master)
 entry_t.grid(row = 2, column = 1)
 
-Label(tk, text='N = ').grid(row = 2, column = 2)
-entry_n = Entry(tk)
+tk.Label(master, text='N = ').grid(row = 2, column = 2)
+entry_n = tk.Entry(master)
 entry_n.grid(row = 2, column = 3)
 
-Label(tk, text='K = ').grid(row = 2, column = 4)
-entry_k = Entry(tk)
+tk.Label(master, text='K = ').grid(row = 2, column = 4)
+entry_k = tk.Entry(master)
 entry_k.grid(row = 2, column = 5)
 
-tk.Label(master, text='начальные: ').grid(row = 3, column = 0)
+tk.Label(master, text='начальные: ').grid(row = 3, column = 1)
 combobox_initial = ttk.Combobox(master, values = values[:-1])
 combobox_initial.set(values[0])
-combobox_initial.grid(row = 3, column = 1)
+combobox_initial.grid(row = 3, column = 2)
 
-tk.Label(master, text='граничные: ').grid(row = 3, column = 3)
+tk.Label(master, text='граничные: ').grid(row = 3, column = 5)
 combobox_boundary = ttk.Combobox(master, values = values)
 combobox_boundary.set(values[0])
-combobox_boundary.grid(row = 3, column = 4)
+combobox_boundary.grid(row = 3, column = 6)
 
-button_apply = Button(tk, text = 'Построить график')
-button_apply.grid(row = 3, column = 0, columnspan = 8)
+button_apply = tk.Button(master, text = 'Построить график')
+button_apply.grid(row = 4, column = 0, columnspan = 8)
 
 button_apply.bind('<Button-1>', LW_6)
-tk.bind('<Return>', LW_6)
+master.bind('<Return>', LW_6)
 
-tk.mainloop()
+master.mainloop()
