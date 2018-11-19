@@ -22,13 +22,12 @@ static constexpr ldbl psi_2_x(const ldbl &, const ldbl &, const ldbl &,
     const ldbl &) noexcept;
 static constexpr ldbl u_exact(const ldbl &, const ldbl &, const ldbl &,
     const ldbl &, const ldbl &) noexcept;
-/*
+
 static constexpr ldbl L = PI_LDBL;
 static constexpr ldbl ALPHA = 1.0,
                       BETA  = 0.0,
                       GAMMA = 1.0,
                       DELTA = 0.0;
-*/
 /*
 static constexpr ldbl L = PI_LDBL;
 static constexpr ldbl ALPHA = 0.0,
@@ -36,12 +35,13 @@ static constexpr ldbl ALPHA = 0.0,
                       GAMMA = 0.0,
                       DELTA = 1.0;
 */
-static constexpr ldbl L = PI_LDBL / 2.0;
+/*
+static constexpr ldbl L = PI_2_LDBL;
 static constexpr ldbl ALPHA = 0.0,
                       BETA  = 1.0,
                       GAMMA = 0.0,
                       DELTA = 1.0;
-
+*/
 int main()
 {
     try
@@ -73,7 +73,7 @@ int main()
 
     return 0;
 }
-/*
+
 static constexpr ldbl f_x_t(const ldbl &x, const ldbl &t) noexcept
 {
     return -std::cos(x) * std::exp(-t);
@@ -97,6 +97,18 @@ static constexpr ldbl psi_1_x(const ldbl &, const ldbl &, const ldbl &,
     return std::sin(x);
 }
 
+static constexpr ldbl psi_prime_1_x(const ldbl &, const ldbl &, const ldbl &,
+    const ldbl &x) noexcept
+{
+    return std::cos(x);
+}
+
+static constexpr ldbl psi_prime_prime_1_x(const ldbl &, const ldbl &, const ldbl &,
+    const ldbl &x) noexcept
+{
+    return -std::sin(x);
+}
+
 static constexpr ldbl psi_2_x(const ldbl &, const ldbl &, const ldbl &,
     const ldbl &x) noexcept
 {
@@ -108,7 +120,6 @@ static constexpr ldbl u_exact(const ldbl &, const ldbl &, const ldbl &,
 {
     return std::exp(-t) * std::sin(x);
 }
-*/
 /*
 static constexpr ldbl f_x_t(const ldbl &x, const ldbl &t) noexcept
 {
@@ -133,6 +144,18 @@ static constexpr ldbl psi_1_x(const ldbl &, const ldbl &, const ldbl &,
     return std::cos(x);
 }
 
+static constexpr ldbl psi_prime_1_x(const ldbl &, const ldbl &, const ldbl &,
+    const ldbl &x) noexcept
+{
+    return -std::sin(x);
+}
+
+static constexpr ldbl psi_prime_prime_1_x(const ldbl &, const ldbl &, const ldbl &,
+    const ldbl &x) noexcept
+{
+    return -std::cos(x);
+}
+
 static constexpr ldbl psi_2_x(const ldbl &, const ldbl &, const ldbl &,
     const ldbl &x) noexcept
 {
@@ -145,6 +168,7 @@ static constexpr ldbl u_exact(const ldbl &, const ldbl &, const ldbl &,
     return std::exp(-t) * std::cos(x);
 }
 */
+/*
 static constexpr ldbl f_x_t(const ldbl &, const ldbl &) noexcept
 {
     return 0.0;
@@ -191,3 +215,4 @@ static constexpr ldbl u_exact(const ldbl &, const ldbl &, const ldbl &,
 {
     return std::exp(-x) * std::cos(x) * std::cos(2.0 * t);
 }
+*/

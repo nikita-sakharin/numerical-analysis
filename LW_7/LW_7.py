@@ -9,7 +9,7 @@ values = [u"Двухточечная первого",
           u"Двухточечная второго",
           u"Трехточечная второго"]
 
-def LW_6(event):
+def LW_7(event):
     input_path = './input_6.txt'
     output_path = './output_6.csv'
     try:
@@ -22,7 +22,7 @@ def LW_6(event):
 
     with open(input_path, 'w') as file:
         print(a, b, c, d, t, n, k, initial, boundary, file = file)
-    os.system('./LW_6 < ' + input_path + ' > ' + output_path)
+    os.system('./LW_7 < ' + input_path + ' > ' + output_path)
     with open(output_path, 'r') as file:
         reader = csv.reader(file)
         x, u = [], ([], [], [], [])
@@ -85,7 +85,7 @@ combobox_boundary.grid(row = 3, column = 6)
 button_apply = tk.Button(master, text = 'Построить график')
 button_apply.grid(row = 4, column = 0, columnspan = 8)
 
-button_apply.bind('<Button-1>', LW_6)
-master.bind('<Return>', LW_6)
+button_apply.bind('<Button-1>', LW_7)
+master.bind('<Return>', LW_7)
 
 master.mainloop()

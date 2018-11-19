@@ -3,6 +3,7 @@
 
 #include <cstddef>
 
+#include <array>
 #include <limits>
 #include <type_traits>
 
@@ -77,13 +78,14 @@ ublas::vector<T> explicit_fdm(const T a, const T b, const T c,
         a_n = -2.0 * gamma * a * a / h,
         b_n = gamma * (2.0 * a * a / h + h / tau - c * h) +
             delta * (2.0 * a * a + b * h);
-    if (!n_upper || !k_upper || h < EPSILON || tau < EPSILON || sigma > 0.5 ||
+    if (n_upper < 2U || !k_upper || h < EPSILON || tau < EPSILON || sigma > 0.5 ||
         !is_num_diff_includes(boundary))
     {
-        throw std::logic_error("!n || !k || h < epsilon || tau < epsilon || sigma > 0.5");
+        throw std::logic_error("n < 2 || !k || h < epsilon || tau < epsilon || sigma > 0.5");
     }
 
-    ublas::vector<ublas::vector<T>> w_h_tau(TWO, ublas::vector<T>(n_upper + 1));
+    std::array<ublas::vector<T>, TWO> w_h_tau;
+    w_h_tau.fill(ublas::vector<T>(n_upper + 1));
     for (std::size_t j = 0; j <= n_upper; ++j)
     {
         w_h_tau[0][j] = psi_x(a, b, c, j * h);
@@ -177,7 +179,8 @@ ublas::vector<T> implicit_fdm(const T a, const T b, const T c,
         case THREE_POINT_SECOND_ORDER:
             break;
     }
-    ublas::vector<ublas::vector<T>> w_h_tau(TWO, ublas::vector<T>(n_upper + 1));
+    std::array<ublas::vector<T>, TWO> w_h_tau;
+    w_h_tau.fill(ublas::vector<T>(n_upper + 1));
     for (std::size_t j = 0; j <= n_upper; ++j)
     {
         w_h_tau[0][j] = psi_x(a, b, c, j * h);
@@ -263,7 +266,8 @@ ublas::vector<T> crank_nicolson(const T a, const T b, const T c,
         case THREE_POINT_SECOND_ORDER:
             break;
     }
-    ublas::vector<ublas::vector<T>> w_h_tau(TWO, ublas::vector<T>(n_upper + 1));
+    std::array<ublas::vector<T>, TWO> w_h_tau;
+    w_h_tau.fill(ublas::vector<T>(n_upper + 1));
     for (std::size_t j = 0; j <= n_upper; ++j)
     {
         w_h_tau[0][j] = psi_x(a, b, c, j * h);
@@ -322,7 +326,7 @@ static bool is_num_diff_includes(const NumDiff boundary) noexcept
 
 template<typename T,
     typename = std::enable_if<std::is_floating_point<T>::value>>
-void to_three_diagonal(ublas::vector<T> &a, ublas::vector<T> &b, ublas::vector<T> &c,
+static void to_three_diagonal(ublas::vector<T> &a, ublas::vector<T> &b, ublas::vector<T> &c,
     ublas::vector<T> &d, const T m_0_2, const T m_n_n_minus_2) noexcept
 {
     const std::size_t n = d.size() - 1;
