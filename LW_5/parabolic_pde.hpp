@@ -30,7 +30,8 @@ ublas::vector<T> explicit_fdm(const T, const T, const T,
     const std::function<T (const T &, const T &, const T &, const T &)> &,
     const std::function<T (const T &, const T &, const T &, const T &)> &,
     const std::function<T (const T &, const T &, const T &, const T &)> &,
-    NumDiff);
+    NumDiff,
+    const std::function<void (const ublas::vector<T> &)> &get_error);
 
 template<typename T,
     typename = std::enable_if<std::is_floating_point<T>::value>>
@@ -40,7 +41,8 @@ ublas::vector<T> implicit_fdm(const T, const T, const T,
     const std::function<T (const T &, const T &, const T &, const T &)> &,
     const std::function<T (const T &, const T &, const T &, const T &)> &,
     const std::function<T (const T &, const T &, const T &, const T &)> &,
-    NumDiff);
+    NumDiff,
+    const std::function<void (const ublas::vector<T> &)> &);
 
 template<typename T,
     typename = std::enable_if<std::is_floating_point<T>::value>>
@@ -50,7 +52,8 @@ ublas::vector<T> crank_nicolson(const T, const T, const T,
     const std::function<T (const T &, const T &, const T &, const T &)> &,
     const std::function<T (const T &, const T &, const T &, const T &)> &,
     const std::function<T (const T &, const T &, const T &, const T &)> &,
-    NumDiff);
+    NumDiff,
+    const std::function<void (const ublas::vector<T> &)> &);
 
 static bool is_num_diff_includes(NumDiff) noexcept;
 
@@ -68,7 +71,8 @@ ublas::vector<T> explicit_fdm(const T a, const T b, const T c,
     const std::function<T (const T &, const T &, const T &, const T &)> &phi_0_t,
     const std::function<T (const T &, const T &, const T &, const T &)> &phi_l_t,
     const std::function<T (const T &, const T &, const T &, const T &)> &psi_x,
-    const NumDiff boundary)
+    const NumDiff boundary,
+    const std::function<void (const ublas::vector<T> &)> &get_error)
 {
     static constexpr T EPSILON = std::numeric_limits<T>::epsilon();
     const T h = l / n_upper, tau = t / k_upper, sigma = a * a * tau / (h * h),
@@ -90,6 +94,8 @@ ublas::vector<T> explicit_fdm(const T a, const T b, const T c,
     {
         w_h_tau[0][j] = psi_x(a, b, c, j * h);
     }
+    get_error(w_h_tau[0]);
+
     for (std::size_t k = 1; k <= k_upper; ++k)
     {
         ublas::vector<T> &u_k = w_h_tau[k % TWO],
@@ -130,6 +136,7 @@ ublas::vector<T> explicit_fdm(const T a, const T b, const T c,
                     (2.0 * delta * h + 3.0 * gamma);
                 break;
         }
+        get_error(u_k);
     }
 
     return w_h_tau[k_upper % TWO];
@@ -144,7 +151,8 @@ ublas::vector<T> implicit_fdm(const T a, const T b, const T c,
     const std::function<T (const T &, const T &, const T &, const T &)> &phi_0_t,
     const std::function<T (const T &, const T &, const T &, const T &)> &phi_l_t,
     const std::function<T (const T &, const T &, const T &, const T &)> &psi_x,
-    const NumDiff boundary)
+    const NumDiff boundary,
+    const std::function<void (const ublas::vector<T> &)> &get_error)
 {
     static constexpr T EPSILON = std::numeric_limits<T>::epsilon();
     const T h = l / n_upper, tau = t / k_upper, sigma = a * a * tau / (h * h);
@@ -185,6 +193,8 @@ ublas::vector<T> implicit_fdm(const T a, const T b, const T c,
     {
         w_h_tau[0][j] = psi_x(a, b, c, j * h);
     }
+    get_error(w_h_tau[0]);
+
     for (std::size_t k = 1; k <= k_upper; ++k)
     {
         ublas::vector<T> &u_k = w_h_tau[k % TWO],
@@ -217,6 +227,7 @@ ublas::vector<T> implicit_fdm(const T a, const T b, const T c,
                 break;
         }
         u_k = thomas_algorithm(a_j, b_j, c_j, d_j);
+        get_error(u_k);
     }
 
     return w_h_tau[k_upper % TWO];
@@ -231,7 +242,8 @@ ublas::vector<T> crank_nicolson(const T a, const T b, const T c,
     const std::function<T (const T &, const T &, const T &, const T &)> &phi_0_t,
     const std::function<T (const T &, const T &, const T &, const T &)> &phi_l_t,
     const std::function<T (const T &, const T &, const T &, const T &)> &psi_x,
-    const NumDiff boundary)
+    const NumDiff boundary,
+    const std::function<void (const ublas::vector<T> &)> &get_error)
 {
     static constexpr T THETA = 0.5, EPSILON = std::numeric_limits<T>::epsilon();
     const T h = l / n_upper, tau = t / k_upper, sigma = a * a * tau / (h * h);
@@ -272,6 +284,8 @@ ublas::vector<T> crank_nicolson(const T a, const T b, const T c,
     {
         w_h_tau[0][j] = psi_x(a, b, c, j * h);
     }
+    get_error(w_h_tau[0]);
+
     for (std::size_t k = 1; k <= k_upper; ++k)
     {
         ublas::vector<T> &u_k = w_h_tau[k % TWO],
@@ -306,6 +320,7 @@ ublas::vector<T> crank_nicolson(const T a, const T b, const T c,
                 break;
         }
         u_k = thomas_algorithm(a_j, b_j, c_j, d_j);
+        get_error(u_k);
     }
 
     return w_h_tau[k_upper % TWO];

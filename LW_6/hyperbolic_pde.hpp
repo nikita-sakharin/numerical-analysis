@@ -34,7 +34,8 @@ ublas::vector<T> explicit_fdm(const T, const T, const T, const T,
     const std::function<T (const T &, const T &, const T &, const T &)> &,
     const std::function<T (const T &, const T &, const T &, const T &)> &,
     const std::function<T (const T &, const T &, const T &, const T &)> &,
-    NumDiff, NumDiff);
+    NumDiff, NumDiff,
+    const std::function<void (const ublas::vector<T> &)> &);
 
 template<typename T,
     typename = std::enable_if<std::is_floating_point<T>::value>>
@@ -48,7 +49,8 @@ ublas::vector<T> implicit_fdm(const T, const T, const T, const T,
     const std::function<T (const T &, const T &, const T &, const T &)> &,
     const std::function<T (const T &, const T &, const T &, const T &)> &,
     const std::function<T (const T &, const T &, const T &, const T &)> &,
-    NumDiff, NumDiff);
+    NumDiff, NumDiff,
+    const std::function<void (const ublas::vector<T> &)> &);
 
 static bool is_enum_includes(NumDiff) noexcept;
 
@@ -70,7 +72,8 @@ ublas::vector<T> explicit_fdm(const T a, const T b, const T c, const T d,
     const std::function<T (const T &, const T &, const T &, const T &)> &psi_prime_1_x,
     const std::function<T (const T &, const T &, const T &, const T &)> &psi_prime_prime_1_x,
     const std::function<T (const T &, const T &, const T &, const T &)> &psi_2_x,
-    const NumDiff initial, const NumDiff boundary)
+    const NumDiff initial, const NumDiff boundary,
+    const std::function<void (const ublas::vector<T> &)> &get_error)
 {
     static constexpr T EPSILON = std::numeric_limits<T>::epsilon();
     const T h = l / n_upper, tau = t / k_upper, sigma = a * a * tau * tau / (h * h),
@@ -111,6 +114,9 @@ ublas::vector<T> explicit_fdm(const T a, const T b, const T c, const T d,
                 throw std::logic_error("initial: THREE_POINT_SECOND_ORDER");
         }
     }
+    get_error(w_h_tau[0]);
+    get_error(w_h_tau[1]);
+
     for (std::size_t k = 2U; k <= k_upper; ++k)
     {
         ublas::vector<T> &u_k = w_h_tau[k % THREE],
@@ -159,6 +165,7 @@ ublas::vector<T> explicit_fdm(const T a, const T b, const T c, const T d,
                     (2.0 * delta * h + 3.0 * gamma);
                 break;
         }
+        get_error(u_k);
     }
 
     return w_h_tau[k_upper % THREE];
@@ -177,7 +184,8 @@ ublas::vector<T> implicit_fdm(const T a, const T b, const T c, const T d,
     const std::function<T (const T &, const T &, const T &, const T &)> &psi_prime_1_x,
     const std::function<T (const T &, const T &, const T &, const T &)> &psi_prime_prime_1_x,
     const std::function<T (const T &, const T &, const T &, const T &)> &psi_2_x,
-    const NumDiff initial, const NumDiff boundary)
+    const NumDiff initial, const NumDiff boundary,
+    const std::function<void (const ublas::vector<T> &)> &get_error)
 {
     static constexpr T EPSILON = std::numeric_limits<T>::epsilon();
     const T h = l / n_upper, tau = t / k_upper, sigma = a * a * tau * tau / (h * h),
@@ -215,6 +223,7 @@ ublas::vector<T> implicit_fdm(const T a, const T b, const T c, const T d,
         case THREE_POINT_SECOND_ORDER:
             break;
     }
+
     std::array<ublas::vector<T>, THREE> w_h_tau;
     w_h_tau.fill(ublas::vector<T>(n_upper + 1));
     for (std::size_t j = 0; j <= n_upper; ++j)
@@ -237,6 +246,9 @@ ublas::vector<T> implicit_fdm(const T a, const T b, const T c, const T d,
                 throw std::logic_error("initial: THREE_POINT_SECOND_ORDER");
         }
     }
+    get_error(w_h_tau[0]);
+    get_error(w_h_tau[1]);
+
     for (std::size_t k = 2U; k <= k_upper; ++k)
     {
         ublas::vector<T> &u_k = w_h_tau[k % THREE],
@@ -278,6 +290,7 @@ ublas::vector<T> implicit_fdm(const T a, const T b, const T c, const T d,
                 break;
         }
         u_k = thomas_algorithm(a_j, b_j, c_j, d_j);
+        get_error(u_k);
     }
 
     return w_h_tau[k_upper % THREE];

@@ -78,9 +78,9 @@ ublas::matrix<T> liebmann_fdm(const T a, const T b, const T c,
     {
         ublas::vector<T> &u_k = w_h_1_h_2[1],
             &u_k_minus_1 = w_h_1_h_2[0];
-        for (std::size_t i = 0; i <= n_1; ++i)
+        for (std::size_t i = 1; i < n_1; ++i)
         {
-            for (std::size_t j = 0; j <= n_2; ++j)
+            for (std::size_t j = 1; j < n_2; ++j)
             {
                 u_k(i, j) =
                     (h_2 * h_2 - a / 2.0 * h_1 * h_2 * h_2) * u_k_minus_1(i + 1, j) +
@@ -90,6 +90,17 @@ ublas::matrix<T> liebmann_fdm(const T a, const T b, const T c,
                     h_1 * h_1 * h_2 * h_2 * f_x_y(i * h_1, j * h_2);
                 u_k /= div;
             }
+            u_k(i, 0)   = phi_3_x(i * h_1) * h_2 / (beta_3 * h_2 - alpha_3) -
+                alpha_3 * u_k(i, 1) / (beta_3 * h_2 - alpha_3);
+            u_k(i, n_2) = phi_4_x(i * h_1) * h_2 / (beta_4 * h_2 + alpha_4) +
+                alpha_4 * u_k(i, 1) / (beta_4 * h_2 + alpha_4);
+        }
+        for (std::size_t j = 1; j < n_2; ++j)
+        {
+            u_k(0, j)   = phi_1_x(i * h_1) * h_1 / (beta_1 * h_1 - alpha_1) -
+                alpha_1 * u_k(1, j) / (beta_1 * h_1 - alpha_1);
+            u_k(i, n_2) = phi_2_x(i * h_1) * h_1 / (beta_2 * h_1 + alpha_2) +
+                alpha_2 * u_k(i, 1) / (beta_2 * h_1 + alpha_2);
         }
         u_k.swap(u_k_minus_1);
     } while (norm_max_diff(w_h_1_h_2[0], w_h_1_h_2[1]) >= epsilon)
@@ -122,9 +133,9 @@ ublas::matrix<T> seidel_fdm(const T a, const T b, const T c,
     do
     {
         ublas::vector<T> &u_k = w_h_1_h_2;
-        for (std::size_t i = 0; i <= n_1; ++i)
+        for (std::size_t i = 1; i < n_1; ++i)
         {
-            for (std::size_t j = 0; j <= n_2; ++j)
+            for (std::size_t j = 1; j < n_2; ++j)
             {
                 const T u_k_minus_1_i_j = u_k(i, j);
                 u_k(i, j) =
