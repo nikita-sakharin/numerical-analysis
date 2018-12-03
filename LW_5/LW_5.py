@@ -1,4 +1,5 @@
 import csv
+import math
 import matplotlib.pyplot as plt
 import numpy as np
 import os
@@ -10,7 +11,7 @@ values = [u"Двухточечная первого",
           u"Трехточечная второго"]
 
 def LW_5(event):
-    l = 3.1415926535897932384626
+    l = math.pi
     error_path = './error_5.csv'
     input_path, output_path = './input_5.txt', './output_5.csv'
 
@@ -67,40 +68,46 @@ def LW_5(event):
 
 master = tk.Tk()
 
+photo_image = tk.PhotoImage(file = 'LW_5.png')
+
+label_photo = tk.Label(master, image = photo_image)
+label_photo.image = photo_image
+label_photo.grid(row = 0, column = 0, columnspan = 8)
+
 label = tk.Label(master, text = 'Введите коэффициенты:')
-label.grid(row = 0, column = 0, columnspan = 6)
+label.grid(row = 1, column = 0, columnspan = 6)
 
-tk.Label(master, text='a = ').grid(row = 1, column = 0)
+tk.Label(master, text='a = ').grid(row = 2, column = 0)
 entry_a = tk.Entry(master)
-entry_a.grid(row = 1, column = 1)
+entry_a.grid(row = 2, column = 1)
 
-tk.Label(master, text='b = ').grid(row = 1, column = 2)
+tk.Label(master, text='b = ').grid(row = 2, column = 2)
 entry_b = tk.Entry(master)
-entry_b.grid(row = 1, column = 3)
+entry_b.grid(row = 2, column = 3)
 
-tk.Label(master, text='c = ').grid(row = 1, column = 4)
+tk.Label(master, text='c = ').grid(row = 2, column = 4)
 entry_c = tk.Entry(master)
-entry_c.grid(row = 1, column = 5)
+entry_c.grid(row = 2, column = 5)
 
-tk.Label(master, text='T = ').grid(row = 2, column = 0)
+tk.Label(master, text='T = ').grid(row = 3, column = 0)
 entry_t = tk.Entry(master)
-entry_t.grid(row = 2, column = 1)
+entry_t.grid(row = 3, column = 1)
 
-tk.Label(master, text='N = ').grid(row = 2, column = 2)
+tk.Label(master, text='N = ').grid(row = 3, column = 2)
 entry_n = tk.Entry(master)
-entry_n.grid(row = 2, column = 3)
+entry_n.grid(row = 3, column = 3)
 
-tk.Label(master, text='K = ').grid(row = 2, column = 4)
+tk.Label(master, text='K = ').grid(row = 3, column = 4)
 entry_k = tk.Entry(master)
-entry_k.grid(row = 2, column = 5)
+entry_k.grid(row = 3, column = 5)
 
-tk.Label(master, text='граничные: ').grid(row = 3, column = 2)
+tk.Label(master, text='граничные: ').grid(row = 4, column = 2)
 combobox_boundary = ttk.Combobox(master, values = values)
 combobox_boundary.set(values[0])
-combobox_boundary.grid(row = 3, column = 3)
+combobox_boundary.grid(row = 4, column = 3)
 
 button_apply = tk.Button(master, text = 'Построить график')
-button_apply.grid(row = 4, column = 0, columnspan = 6)
+button_apply.grid(row = 5, column = 0, columnspan = 6)
 
 button_apply.bind('<Button-1>', LW_5)
 master.bind('<Return>', LW_5)
