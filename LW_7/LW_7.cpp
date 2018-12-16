@@ -6,7 +6,7 @@
 #include <stdexcept>
 
 #include "../generic/header.hpp"
-//#include "elliptic_pde.hpp"
+#include "elliptic_pde.hpp"
 
 static constexpr ldbl f_x_t(const ldbl &, const ldbl &) noexcept;
 static constexpr ldbl phi_1_y(const ldbl &) noexcept;
@@ -14,9 +14,7 @@ static constexpr ldbl phi_2_y(const ldbl &) noexcept;
 static constexpr ldbl phi_3_x(const ldbl &) noexcept;
 static constexpr ldbl phi_4_x(const ldbl &) noexcept;
 static constexpr ldbl u_exact(const ldbl &, const ldbl &) noexcept;
-/**/
-#include "elliptic_pde.hpp"
-/**/
+
 static constexpr ldbl QUIET_NAN_LDBL = std::numeric_limits<ldbl>::quiet_NaN();
 
 static constexpr ldbl A = -2.0,
@@ -32,36 +30,7 @@ static constexpr ldbl ALPHA_1 = 0.0,
                       BETA_3  = 1.0,
                       ALPHA_4 = 0.0,
                       BETA_4  = 1.0;
-/*
-static constexpr ldbl A = 0.0,
-                      B = 0.0,
-                      C = 0.0;
-static constexpr ldbl L_1 = 1.0,
-                      L_2 = 1.0;
-static constexpr ldbl ALPHA_1 = 1.0,
-                      BETA_1  = 0.0,
-                      ALPHA_2 = 0.0,
-                      BETA_2  = 1.0,
-                      ALPHA_3 = 1.0,
-                      BETA_3  = 0.0,
-                      ALPHA_4 = 0.0,
-                      BETA_4  = 1.0;
-*/
-/*
-static constexpr ldbl A = 0.0,
-                      B = 0.0,
-                      C = 0.0;
-static constexpr ldbl L_1 = PI_LDBL,
-                      L_2 = PI_LDBL;
-static constexpr ldbl ALPHA_1 = 1.0,
-                      BETA_1  = 0.0,
-                      ALPHA_2 = 1.0,
-                      BETA_2  = 0.0,
-                      ALPHA_3 = 0.0,
-                      BETA_3  = 1.0,
-                      ALPHA_4 = 0.0,
-                      BETA_4  = 1.0;
-*/
+
 int main(int argc, const char *argv[])
 {
     try
@@ -167,65 +136,3 @@ static constexpr ldbl u_exact(const ldbl &x, const ldbl &y) noexcept
 {
     return std::exp(-x - y) * std::cos(x) * std::cos(y);
 }
-/*
-static constexpr ldbl f_x_t(const ldbl &, const ldbl &) noexcept
-{
-    return 0.0;
-}
-
-static constexpr ldbl phi_1_y(const ldbl &) noexcept
-{
-    return 0.0;
-}
-
-static constexpr ldbl phi_2_y(const ldbl &y) noexcept
-{
-    return 1.0 - y * y;
-}
-
-static constexpr ldbl phi_3_x(const ldbl &) noexcept
-{
-    return 0.0;
-}
-
-static constexpr ldbl phi_4_x(const ldbl &x) noexcept
-{
-    return x * x - 1.0;
-}
-
-static constexpr ldbl u_exact(const ldbl &x, const ldbl &y) noexcept
-{
-    return x * x - y * y;
-}
-*/
-/*
-static constexpr ldbl f_x_t(const ldbl &, const ldbl &) noexcept
-{
-    return 0.0;
-}
-
-static constexpr ldbl phi_1_y(const ldbl &y) noexcept
-{
-    return std::exp(y);
-}
-
-static constexpr ldbl phi_2_y(const ldbl &y) noexcept
-{
-    return -std::exp(y);
-}
-
-static constexpr ldbl phi_3_x(const ldbl &x) noexcept
-{
-    return std::sin(x);
-}
-
-static constexpr ldbl phi_4_x(const ldbl &x) noexcept
-{
-    return E_LDBL * std::sin(x);
-}
-
-static constexpr ldbl u_exact(const ldbl &x, const ldbl &y) noexcept
-{
-    return std::sin(x) * std::exp(y);
-}
-*/

@@ -137,7 +137,7 @@ ublas::matrix<T> seidel_fdm(const T a, const T b, const T c,
 
 template<typename T, typename>
 static void initial_approximation(const std::size_t n_1, const std::size_t n_2,
-    const std::size_t h_1, const std::size_t h_2,
+    const std::size_t, const std::size_t h_2,
     const std::function<T (const T &)> &phi_1_y,
     const std::function<T (const T &)> &phi_2_y,
     ublas::matrix<T> &u_0)
@@ -147,10 +147,7 @@ static void initial_approximation(const std::size_t n_1, const std::size_t n_2,
         const T u_0_j = phi_1_y(j * h_2), u_n_1_j = phi_2_y(j * h_2);
         for (std::size_t i = 0; i <= n_1; ++i)
         {
-            u_0(i, j) = u_exact(i * h_1, j * h_2);
-//          u_0(i, j) = u_0_j + (u_n_1_j - u_0_j) * i / n_1;
-            static_cast<void>(u_0_j);
-            static_cast<void>(u_n_1_j);
+            u_0(i, j) = u_0_j + (u_n_1_j - u_0_j) * i / n_1;
         }
     }
 }
