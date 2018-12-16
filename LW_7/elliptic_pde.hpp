@@ -14,9 +14,7 @@
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/vector_proxy.hpp>
 
-#include "../generic/thomas_algorithm.hpp"
-
-static constexpr std::size_t TWO = 2U;
+using namespace boost::numeric;
 
 template<typename T,
     typename = std::enable_if<std::is_floating_point<T>::value>>
