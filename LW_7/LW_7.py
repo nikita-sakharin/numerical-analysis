@@ -14,13 +14,13 @@ def LW_7(event):
 
     try:
         n_1, n_2 = int(entry_n1.get()), int(entry_n2.get())
-        epsilon, y = float(entry_epsilon.get()), float(entry_y.get())
+        epsilon, y, omega = float(entry_epsilon.get()), float(entry_y.get()), float(entry_omega.get())
     except ValueError:
-        label.configure(text = 'n: int, n_2: int, epsilon: float, y: float')
+        label.configure(text = 'n_1: int, n_2: int, epsilon: float, y: float, omega: float')
         return
 
     with open(input_path, 'w') as file:
-        print(n_1, n_2, epsilon, y, file = file)
+        print(n_1, n_2, epsilon, y, omega, file = file)
     os.system('./LW_7 {} < {} > {}'.format(error_path, input_path, output_path))
 
     x, u = [], ([], [], [])
@@ -34,9 +34,24 @@ def LW_7(event):
     fig = plt.figure()
     subplot = fig.add_subplot(111, facecolor = '#FFFFFF')
     subplot.plot(x, u[0], color = 'red', lw = 2, label = 'u')
-    subplot.plot(x, u[1], color = 'green', lw = 2, label = 'liebmann')
+    subplot.plot(x, u[1], color = 'green', lw = 2, label = 'successive')
     subplot.plot(x, u[2], color = 'blue', lw = 2, label = 'seidel')
     plt.legend()
+
+    t, error = [], ([], [])
+    with open(error_path, 'r') as file:
+        reader = csv.reader(file)
+        for line in reader:
+            t.append(float(line[0]))
+            for i in range(0, 2):
+                error[i].append(float(line[i + 1]))
+
+    fig = plt.figure()
+    subplot = fig.add_subplot(111, facecolor = '#FFFFFF')
+    subplot.plot(t, error[0], color = 'green', lw = 2, label = 'successive')
+    subplot.plot(t, error[1], color = 'blue', lw = 2, label = 'seidel')
+    plt.legend()
+
     plt.show()
 
 master = tk.Tk()
@@ -68,6 +83,10 @@ entry_epsilon.grid(row = 3, column = 1)
 tk.Label(master, text='y = ').grid(row = 3, column = 2)
 entry_y = tk.Entry(master)
 entry_y.grid(row = 3, column = 3)
+
+tk.Label(master, text='omega = ').grid(row = 3, column = 4)
+entry_omega = tk.Entry(master)
+entry_omega.grid(row = 3, column = 5)
 
 button_apply = tk.Button(master, text = 'Построить график')
 button_apply.grid(row = 4, column = 0, columnspan = 4)
