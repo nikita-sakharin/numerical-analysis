@@ -38,7 +38,7 @@ ublas::matrix<T> seidel_fdm(const T, const T, const T,
 
 template<typename T,
     typename = std::enable_if<std::is_floating_point<T>::value>>
-static void initial_approximation(std::size_t, std::size_t, std::size_t, std::size_t,
+static void initial_approximation(std::size_t, std::size_t, const T, const T,
     const std::function<T (const T &)> &, const std::function<T (const T &)> &,
     ublas::matrix<T> &);
 
@@ -135,7 +135,7 @@ ublas::matrix<T> seidel_fdm(const T a, const T b, const T c,
 
 template<typename T, typename>
 static void initial_approximation(const std::size_t n_1, const std::size_t n_2,
-    const std::size_t, const std::size_t h_2,
+    const T, const T h_2,
     const std::function<T (const T &)> &phi_1_y,
     const std::function<T (const T &)> &phi_2_y,
     ublas::matrix<T> &u_0)
