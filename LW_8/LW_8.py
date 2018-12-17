@@ -13,6 +13,7 @@ def LW_8(event):
 
     try:
         n_1, n_2, k = int(entry_n1.get()), int(entry_n2.get()), int(entry_k.get())
+        a, b, mu = float(entry_a.get()), float(entry_b.get()), float(entry_mu.get())
         t, y = float(entry_t.get()), float(entry_y.get())
     except ValueError:
         label.configure(text = 'n_1: int, n_2: int, k: int, t: float, y: float')
@@ -59,10 +60,10 @@ photo_image = PhotoImage(file = 'LW_8.png')
 
 label_photo = tk.Label(master, image = photo_image)
 label_photo.image = photo_image
-label_photo.grid(row = 0, column = 0, columnspan = 4)
+label_photo.grid(row = 0, column = 0, columnspan = 6)
 
 label = tk.Label(master, text = 'Введите коэффициенты:')
-label.grid(row = 1, column = 0, columnspan = 4)
+label.grid(row = 1, column = 0, columnspan = 6)
 
 tk.Label(master, text = 'N1 = ').grid(row = 2, column = 0)
 entry_n1 = tk.Entry(master)
@@ -76,16 +77,28 @@ tk.Label(master, text = 'K = ').grid(row = 2, column = 4)
 entry_k = tk.Entry(master)
 entry_k.grid(row = 2, column = 5)
 
-tk.Label(master, text = 't = ').grid(row = 3, column = 0)
-entry_t = tk.Entry(master)
-entry_t.grid(row = 3, column = 1)
+tk.Label(master, text = 'a = ').grid(row = 3, column = 0)
+entry_a = tk.Entry(master)
+entry_a.grid(row = 3, column = 1)
 
-tk.Label(master, text = 'y = ').grid(row = 3, column = 2)
+tk.Label(master, text = 'b = ').grid(row = 3, column = 2)
+entry_b = tk.Entry(master)
+entry_b.grid(row = 3, column = 3)
+
+tk.Label(master, text = 'mu = ').grid(row = 3, column = 4)
+entry_mu = tk.Entry(master)
+entry_mu.grid(row = 2, column = 5)
+
+tk.Label(master, text = 't = ').grid(row = 4, column = 0)
+entry_t = tk.Entry(master)
+entry_t.grid(row = 4, column = 1)
+
+tk.Label(master, text = 'y = ').grid(row = 4, column = 2)
 entry_y = tk.Entry(master)
-entry_y.grid(row = 3, column = 3)
+entry_y.grid(row = 4, column = 3)
 
 button_apply = tk.Button(master, text = 'Построить график')
-button_apply.grid(row = 4, column = 0, columnspan = 4)
+button_apply.grid(row = 5, column = 0, columnspan = 6)
 
 button_apply.bind('<Button-1>', LW_8)
 master.bind('<Return>', LW_8)

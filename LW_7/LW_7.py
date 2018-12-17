@@ -62,7 +62,7 @@ label_photo.image = photo_image
 label_photo.grid(row = 0, column = 0, columnspan = 6)
 
 label = tk.Label(master, text = 'Введите коэффициенты:')
-label.grid(row = 1, column = 0, columnspan = 4)
+label.grid(row = 1, column = 0, columnspan = 6)
 
 tk.Label(master, text = 'N1 = ').grid(row = 2, column = 0)
 entry_n1 = tk.Entry(master)
