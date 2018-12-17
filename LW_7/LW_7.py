@@ -8,7 +8,6 @@ import tkinter.ttk as ttk
 from tkinter import PhotoImage
 
 def LW_7(event):
-    l = math.pi / 2
     error_path = './error_7.csv'
     input_path, output_path = './input_7.txt', './output_7.csv'
 
@@ -65,26 +64,23 @@ label_photo.grid(row = 0, column = 0, columnspan = 4)
 label = tk.Label(master, text = 'Введите коэффициенты:')
 label.grid(row = 1, column = 0, columnspan = 4)
 
-label = tk.Label(master, text = 'Введите коэффициенты:')
-label.grid(row = 1, column = 0, columnspan = 4)
-
-tk.Label(master, text='N1 = ').grid(row = 2, column = 0)
+tk.Label(master, text = 'N1 = ').grid(row = 2, column = 0)
 entry_n1 = tk.Entry(master)
 entry_n1.grid(row = 2, column = 1)
 
-tk.Label(master, text='N2 = ').grid(row = 2, column = 2)
+tk.Label(master, text = 'N2 = ').grid(row = 2, column = 2)
 entry_n2 = tk.Entry(master)
 entry_n2.grid(row = 2, column = 3)
 
-tk.Label(master, text='epsilon = ').grid(row = 3, column = 0)
+tk.Label(master, text = 'epsilon = ').grid(row = 3, column = 0)
 entry_epsilon = tk.Entry(master)
 entry_epsilon.grid(row = 3, column = 1)
 
-tk.Label(master, text='y = ').grid(row = 3, column = 2)
+tk.Label(master, text = 'y = ').grid(row = 3, column = 2)
 entry_y = tk.Entry(master)
 entry_y.grid(row = 3, column = 3)
 
-tk.Label(master, text='omega = ').grid(row = 3, column = 4)
+tk.Label(master, text = 'omega = ').grid(row = 3, column = 4)
 entry_omega = tk.Entry(master)
 entry_omega.grid(row = 3, column = 5)
 
