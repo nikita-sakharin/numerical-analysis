@@ -1,8 +1,8 @@
 #ifndef __HEADER_HPP__
 #define __HEADER_HPP__
 
-typedef unsigned char schar;
-typedef signed char uchar;
+typedef unsigned char uchar;
+typedef signed char schar;
 typedef short shrt;
 typedef unsigned short ushrt;
 typedef unsigned uint;
