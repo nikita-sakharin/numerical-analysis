@@ -59,7 +59,7 @@ photo_image = PhotoImage(file = 'LW_7.png')
 
 label_photo = tk.Label(master, image = photo_image)
 label_photo.image = photo_image
-label_photo.grid(row = 0, column = 0, columnspan = 4)
+label_photo.grid(row = 0, column = 0, columnspan = 6)
 
 label = tk.Label(master, text = 'Введите коэффициенты:')
 label.grid(row = 1, column = 0, columnspan = 4)
@@ -85,7 +85,7 @@ entry_omega = tk.Entry(master)
 entry_omega.grid(row = 3, column = 5)
 
 button_apply = tk.Button(master, text = 'Построить график')
-button_apply.grid(row = 4, column = 0, columnspan = 4)
+button_apply.grid(row = 4, column = 0, columnspan = 6)
 
 button_apply.bind('<Button-1>', LW_7)
 master.bind('<Return>', LW_7)
