@@ -20,7 +20,7 @@ def LW_8(event):
         return
 
     with open(input_path, 'w') as file:
-        print(n_1, n_2, k, t, y, file = file)
+        print(n_1, n_2, k, a, b, mu, t, y, file = file)
     os.system('./LW_8 {} < {} > {}'.format(error_path, input_path, output_path))
 
     x, u = [], ([], [], [])
@@ -87,7 +87,7 @@ entry_b.grid(row = 3, column = 3)
 
 tk.Label(master, text = 'mu = ').grid(row = 3, column = 4)
 entry_mu = tk.Entry(master)
-entry_mu.grid(row = 2, column = 5)
+entry_mu.grid(row = 3, column = 5)
 
 tk.Label(master, text = 't = ').grid(row = 4, column = 0)
 entry_t = tk.Entry(master)
