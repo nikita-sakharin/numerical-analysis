@@ -112,25 +112,23 @@ ublas::matrix<T> splitting_method(const T a, const T b, const T mu,
     a_j(n_2) = -alpha_2 / h_2;
     b_j(n_2) = beta_2 + alpha_2 / h_2;
 
-    ublas::matrix<T> u_k(n_1 + 1, n_2 + 1), u_k_minus_1_divides_2(n_1 + 1, n_2 + 1),
-        u_k_minus_1(n_1 + 1, n_2 + 1);
-    initial_approximation(a, b, mu, n_1, h_1, n_2, h_2, psi_x_y, u_k_minus_1);
-    get_error(u_k_minus_1);
+    ublas::matrix<T> u(n_1 + 1, n_2 + 1), u_temp(n_1 + 1, n_2 + 1);
+    initial_approximation(a, b, mu, n_1, h_1, n_2, h_2, psi_x_y, u);
+    get_error(u);
     for (std::size_t k = 1; k <= k_upper; ++k)
     {
         step_x(a, b, mu, f_x_y_t,
             n_1, h_1, n_2, h_2, tau, k, sigma_b, alpha_1, beta_1, alpha_2, beta_2,
             phi_1_x_t, phi_2_x_t, phi_3_y_t, phi_4_y_t, a_i, b_i, c_i, d_i,
-            method, u_k_minus_1, u_k_minus_1_divides_2);
+            method, u, u_temp);
         step_y(a, b, mu, f_x_y_t,
             n_1, h_1, n_2, h_2, tau, k, sigma_a, alpha_3, beta_3, alpha_4, beta_4,
             phi_1_x_t, phi_2_x_t, phi_3_y_t, phi_4_y_t, a_j, b_j, c_j, d_j,
-            method, u_k_minus_1_divides_2, u_k);
-        get_error(u_k);
-        u_k.swap(u_k_minus_1);
+            method, u_temp, u);
+        get_error(u);
     }
 
-    return u_k_minus_1;
+    return u;
 }
 
 static constexpr bool is_enum_includes(const Method method) noexcept

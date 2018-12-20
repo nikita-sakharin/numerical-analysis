@@ -8,9 +8,6 @@
 #include "../generic/header.hpp"
 #include "splitting_methods.hpp"
 
-/**/
-#include <boost/numeric/ublas/io.hpp>
-/**/
 static constexpr ldbl f_x_y_t(const ldbl &, const ldbl &, const ldbl &,
     const ldbl &, const ldbl &, const ldbl &) noexcept;
 static constexpr ldbl phi_1_x_t(const ldbl &, const ldbl &, const ldbl &,
@@ -59,10 +56,10 @@ int main(int argc, const char *argv[])
         const ldbl h_1 = L_1 / n_1, h_2 = L_2 / n_2, tau = t / k_upper;
         std::vector<ldbl> alternating_direction_error, fractional_step_error;
         const ublas::matrix<ldbl>
-            alternating_direction_u = alternating_direction_method<ldbl>(a, b, mu,
+            alternating_direction_u = splitting_method<ldbl>(a, b, mu,
                 f_x_y_t, L_1, n_1, L_2, n_2, t, k_upper,
                 ALPHA_1, BETA_1, ALPHA_2, BETA_2, ALPHA_3, BETA_3, ALPHA_4, BETA_4,
-                phi_1_x_t, phi_2_x_t, phi_3_y_t, phi_4_y_t, psi_x_y,
+                phi_1_x_t, phi_2_x_t, phi_3_y_t, phi_4_y_t, psi_x_y, ALTERNATING_DIRECTION,
                 [&] (const ublas::matrix<ldbl> &u_k) -> void
                 {
                     ldbl error = 0.0;
@@ -78,10 +75,10 @@ int main(int argc, const char *argv[])
                     }
                     alternating_direction_error.push_back(error);
                 }),
-            fractional_step_u = fractional_step_method<ldbl>(a, b, mu,
+            fractional_step_u = splitting_method<ldbl>(a, b, mu,
                 f_x_y_t, L_1, n_1, L_2, n_2, t, k_upper,
                 ALPHA_1, BETA_1, ALPHA_2, BETA_2, ALPHA_3, BETA_3, ALPHA_4, BETA_4,
-                phi_1_x_t, phi_2_x_t, phi_3_y_t, phi_4_y_t, psi_x_y,
+                phi_1_x_t, phi_2_x_t, phi_3_y_t, phi_4_y_t, psi_x_y, FRACTIONAL_STEP,
                 [&] (const ublas::matrix<ldbl> &u_k) -> void
                 {
                     ldbl error = 0.0;
