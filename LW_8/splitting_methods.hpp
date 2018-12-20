@@ -14,7 +14,38 @@
 #include <boost/numeric/ublas/vector_proxy.hpp>
 
 #include "../generic/thomas_algorithm.hpp"
+/**/
+void print_matrix(const ublas::matrix<ldbl> &);
+void print_vector(const ublas::vector<ldbl> &);
 
+void print_matrix(const ublas::matrix<ldbl> &u_k)
+{
+    const std::size_t size1 = u_k.size1(), size2 = u_k.size2();
+    std::cout << std::fixed << std::setprecision(18);
+    std::cout << '[' << size1 << ',' << size2 << "]\n";
+    for (std::size_t i = 0; i < size1; ++i)
+    {
+        for (std::size_t j = 0; j < size2; ++j)
+        {
+            std::cout << u_k(i, j) << ' ';
+        }
+        std::cout << '\n';
+    }
+    std::cout << '\n';
+}
+
+void print_vector(const ublas::vector<ldbl> &v_k)
+{
+    const std::size_t size = v_k.size();
+    std::cout << std::fixed << std::setprecision(18);
+    std::cout << '[' << size << "]\n";
+    for (std::size_t i = 0; i < size; ++i)
+    {
+        std::cout << v_k(i) << ' ';
+    }
+    std::cout << "\n\n";
+}
+/**/
 template<typename T,
     typename = std::enable_if<std::is_floating_point<T>::value>>
 ublas::matrix<T> alternating_direction_method(const T, const T, const T,
@@ -276,7 +307,7 @@ static void alternating_direction_j(const T a, const T b, const T mu,
         d_j(n_2) = phi_2_x_t(a, b, mu, i * h_1, k * tau);
         for (std::size_t j = 1; j < n_2; ++j)
         {
-            d_j(i) = (2.0 * sigma_a - 1.0) * u_k_minus_1_divides_2(i, j)
+            d_j(j) = (2.0 * sigma_a - 1.0) * u_k_minus_1_divides_2(i, j)
                 - tau / 2.0 * f_x_y_t(a, b, mu, i * h_1, j * h_2, k * tau)
                 - sigma_a * u_k_minus_1_divides_2(i - 1, j)
                 - sigma_a * u_k_minus_1_divides_2(i + 1, j);
