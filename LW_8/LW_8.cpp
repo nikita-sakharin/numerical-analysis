@@ -8,6 +8,9 @@
 #include "../generic/header.hpp"
 #include "splitting_methods.hpp"
 
+/**/
+#include <boost/numeric/ublas/io.hpp>
+/**/
 static constexpr ldbl f_x_y_t(const ldbl &, const ldbl &, const ldbl &,
     const ldbl &, const ldbl &, const ldbl &) noexcept;
 static constexpr ldbl phi_1_x_t(const ldbl &, const ldbl &, const ldbl &,
@@ -73,6 +76,9 @@ int main(int argc, const char *argv[])
                                     alternating_direction_error.size() * tau)));
                         }
                     }
+                    std::cout << std::fixed << std::setprecision(18);
+                    std::cout << "k = " << alternating_direction_error.size() << '\n';
+                    std::cout << u_k << '\n' << std::endl;
                     alternating_direction_error.push_back(error);
                 }),
             fractional_step_u = fractional_step_method<ldbl>(a, b, mu,
@@ -92,6 +98,9 @@ int main(int argc, const char *argv[])
                                     fractional_step_error.size() * tau)));
                         }
                     }
+                    std::cout << std::fixed << std::setprecision(18);
+                    std::cout << "k = " << fractional_step_error.size() << '\n';
+                    std::cout << u_k << '\n' << std::endl;
                     fractional_step_error.push_back(error);
                 });
         const std::size_t j = std::round(y / L_2 * n_2);

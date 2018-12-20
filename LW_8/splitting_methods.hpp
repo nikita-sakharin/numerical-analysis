@@ -132,8 +132,8 @@ ublas::matrix<T> alternating_direction_method(const T a, const T b, const T mu,
             n_1, h_1, n_2, h_2, tau, k, sigma_a, alpha_3, beta_3, alpha_4, beta_4,
             phi_1_x_t, phi_2_x_t, phi_3_y_t, phi_4_y_t, a_j, b_j, c_j, d_j,
             u_k_minus_1_divides_2, u_k);
+        get_error(u_k);
         u_k.swap(u_k_minus_1);
-        get_error(u_k_minus_1);
     }
 
     return u_k_minus_1;
@@ -195,8 +195,8 @@ ublas::matrix<T> fractional_step_method(const T a, const T b, const T mu,
             n_1, h_1, n_2, h_2, tau, k, sigma_a, alpha_3, beta_3, alpha_4, beta_4,
             phi_1_x_t, phi_2_x_t, phi_3_y_t, phi_4_y_t, a_j, b_j, c_j, d_j,
             u_k_minus_1_divides_2, u_k);
+        get_error(u_k);
         u_k.swap(u_k_minus_1);
-        get_error(u_k_minus_1);
     }
 
     return u_k_minus_1;
