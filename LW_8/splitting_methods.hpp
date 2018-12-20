@@ -14,7 +14,7 @@
 #include <boost/numeric/ublas/vector_proxy.hpp>
 
 #include "../generic/thomas_algorithm.hpp"
-/**/
+/*
 void print_matrix(const ublas::matrix<ldbl> &);
 void print_vector(const ublas::vector<ldbl> &);
 
@@ -45,7 +45,7 @@ void print_vector(const ublas::vector<ldbl> &v_k)
     }
     std::cout << "\n\n";
 }
-/**/
+*/
 template<typename T,
     typename = std::enable_if<std::is_floating_point<T>::value>>
 ublas::matrix<T> alternating_direction_method(const T, const T, const T,

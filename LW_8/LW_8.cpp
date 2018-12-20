@@ -25,7 +25,7 @@ static constexpr ldbl psi_x_y(const ldbl &, const ldbl &, const ldbl &,
     const ldbl &, const ldbl &) noexcept;
 static constexpr ldbl u_exact(const ldbl &, const ldbl &, const ldbl &,
     const ldbl &, const ldbl &, const ldbl &) noexcept;
-/*
+
 static constexpr ldbl L_1 = PI_LDBL,
                       L_2 = PI_LDBL;
 static constexpr ldbl ALPHA_1 = 0.0,
@@ -36,7 +36,7 @@ static constexpr ldbl ALPHA_1 = 0.0,
                       BETA_3  = 1.0,
                       ALPHA_4 = 1.0,
                       BETA_4  = 0.0;
-*/
+/*
 static constexpr ldbl L_1 = PI_LDBL / 4.0,
                       L_2 = std::log(2.0L);
 static constexpr ldbl ALPHA_1 = 0.0,
@@ -47,7 +47,7 @@ static constexpr ldbl ALPHA_1 = 0.0,
                       BETA_3  = 1.0,
                       ALPHA_4 = 0.0,
                       BETA_4  = 1.0;
-
+*/
 int main(int argc, const char *argv[])
 {
     try
@@ -76,9 +76,6 @@ int main(int argc, const char *argv[])
                                     alternating_direction_error.size() * tau)));
                         }
                     }
-                    std::cout << std::fixed << std::setprecision(18);
-                    std::cout << "k = " << alternating_direction_error.size() << '\n';
-                    std::cout << u_k << '\n' << std::endl;
                     alternating_direction_error.push_back(error);
                 }),
             fractional_step_u = fractional_step_method<ldbl>(a, b, mu,
@@ -98,9 +95,6 @@ int main(int argc, const char *argv[])
                                     fractional_step_error.size() * tau)));
                         }
                     }
-                    std::cout << std::fixed << std::setprecision(18);
-                    std::cout << "k = " << fractional_step_error.size() << '\n';
-                    std::cout << u_k << '\n' << std::endl;
                     fractional_step_error.push_back(error);
                 });
         const std::size_t j = std::round(y / L_2 * n_2);
@@ -128,7 +122,7 @@ int main(int argc, const char *argv[])
 
     return 0;
 }
-/*
+
 static constexpr ldbl f_x_y_t(const ldbl &a, const ldbl &b, const ldbl &mu,
     const ldbl &x, const ldbl &y, const ldbl &t) noexcept
 {
@@ -170,7 +164,7 @@ static constexpr ldbl u_exact(const ldbl &, const ldbl &, const ldbl &mu,
 {
     return std::sin(x) * std::sin(y) * std::sin(mu * t);
 }
-*/
+/*
 static constexpr ldbl f_x_y_t(const ldbl &, const ldbl &, const ldbl &,
     const ldbl &, const ldbl &, const ldbl &) noexcept
 {
@@ -180,13 +174,13 @@ static constexpr ldbl f_x_y_t(const ldbl &, const ldbl &, const ldbl &,
 static constexpr ldbl phi_1_x_t(const ldbl &a, const ldbl &, const ldbl &,
     const ldbl &x, const ldbl &t) noexcept
 {
-    return 5.0 / 4.0 * std::cos(2.0 * x) * std::exp(-3.0 * a * t);
+    return std::cos(2.0 * x) * std::exp(-3.0 * a * t);
 }
 
 static constexpr ldbl phi_2_x_t(const ldbl &a, const ldbl &, const ldbl &,
     const ldbl &x, const ldbl &t) noexcept
 {
-    return std::cos(2.0 * x) * std::exp(-3.0 * a * t);
+    return 5.0 / 4.0 * std::cos(2.0 * x) * std::exp(-3.0 * a * t);
 }
 
 static constexpr ldbl phi_3_y_t(const ldbl &a, const ldbl &, const ldbl &,
@@ -212,3 +206,4 @@ static constexpr ldbl u_exact(const ldbl &a, const ldbl &, const ldbl &,
 {
     return std::cos(2.0 * x) * std::cosh(y) * std::exp(-3.0 * a * t);
 }
+*/
