@@ -39,7 +39,7 @@ ublas::matrix<T> seidel_fdm(const T, const T, const T,
 template<typename T,
     typename = std::enable_if<std::is_floating_point<T>::value>>
 static void initial_approximation(std::size_t, std::size_t, const T, const T,
-    const T, const T,
+    const T, const T, const T, const T,
     const std::function<T (const T &)> &, const std::function<T (const T &)> &,
     ublas::matrix<T> &);
 
@@ -83,8 +83,8 @@ ublas::matrix<T> successive_fdm(const T a, const T b, const T c,
     }
 
     ublas::matrix<T> u_k(n_1 + 1, n_2 + 1), u_k_minus_1(n_1 + 1, n_2 + 1);
-    initial_approximation(n_1, n_2, h_1, h_2, beta_1, beta_2, phi_1_y, phi_2_y,
-        u_k_minus_1);
+    initial_approximation(n_1, n_2, h_1, h_2, alpha_1, beta_1, alpha_2, beta_2,
+        phi_1_y, phi_2_y, u_k_minus_1);
     get_error(u_k_minus_1);
     T norm;
     do
@@ -121,7 +121,8 @@ ublas::matrix<T> seidel_fdm(const T a, const T b, const T c,
     }
 
     ublas::matrix<T> u_k(n_1 + 1, n_2 + 1);
-    initial_approximation(n_1, n_2, h_1, h_2, beta_1, beta_2, phi_1_y, phi_2_y, u_k);
+    initial_approximation(n_1, n_2, h_1, h_2, alpha_1, beta_1, alpha_2, beta_2,
+        phi_1_y, phi_2_y, u_k);
     get_error(u_k);
     T norm;
     do
@@ -137,15 +138,15 @@ ublas::matrix<T> seidel_fdm(const T a, const T b, const T c,
 
 template<typename T, typename>
 static void initial_approximation(const std::size_t n_1, const std::size_t n_2,
-    const T, const T h_2, const T beta_1, const T beta_2,
+    const T, const T h_2,
+    const T, const T, const T, const T,
     const std::function<T (const T &)> &phi_1_y,
     const std::function<T (const T &)> &phi_2_y,
     ublas::matrix<T> &u_0)
 {
     for (std::size_t j = 0; j <= n_2; ++j)
     {
-        const T u_0_j = phi_1_y(j * h_2) / beta_1,
-            u_n_1_j = phi_2_y(j * h_2) / beta_2;
+        const T u_0_j = phi_1_y(j * h_2), u_n_1_j = phi_2_y(j * h_2);
         for (std::size_t i = 0; i <= n_1; ++i)
         {
             u_0(i, j) = u_0_j + (u_n_1_j - u_0_j) * i / n_1;
