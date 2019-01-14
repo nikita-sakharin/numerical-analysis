@@ -8,6 +8,7 @@
 #include "../generic/header.hpp"
 #include "parabolic_pde.hpp"
 
+static constexpr ldbl f_x_t(const ldbl &, const ldbl &) noexcept;
 static constexpr ldbl phi_0_t(const ldbl &, const ldbl &, const ldbl &,
     const ldbl &) noexcept;
 static constexpr ldbl phi_l_t(const ldbl &, const ldbl &, const ldbl &,
@@ -37,7 +38,7 @@ int main(int argc, const char *argv[])
             implicit_fdm_error,
             crank_nicolson_error;
         const ublas::vector<ldbl>
-            explicit_fdm_u = explicit_fdm<ldbl>(a, b, c,
+            explicit_fdm_u = explicit_fdm<ldbl>(a, b, c, f_x_t,
                 L, n, t, k, ALPHA, BETA, GAMMA, DELTA,
                 phi_0_t, phi_l_t, psi_x, static_cast<NumDiff>(boundary),
                 [&] (const ublas::vector<ldbl> &u_k) -> void
@@ -52,7 +53,7 @@ int main(int argc, const char *argv[])
                     }
                     explicit_fdm_error.push_back(error);
                 }),
-            implicit_fdm_u = implicit_fdm<ldbl>(a, b, c,
+            implicit_fdm_u = implicit_fdm<ldbl>(a, b, c, f_x_t,
                 L, n, t, k, ALPHA, BETA, GAMMA, DELTA,
                 phi_0_t, phi_l_t, psi_x, static_cast<NumDiff>(boundary),
                 [&] (const ublas::vector<ldbl> &u_k) -> void
@@ -67,7 +68,7 @@ int main(int argc, const char *argv[])
                     }
                     implicit_fdm_error.push_back(error);
                 }),
-            crank_nicolson_u = crank_nicolson<ldbl>(a, b, c,
+            crank_nicolson_u = crank_nicolson<ldbl>(a, b, c, f_x_t,
                 L, n, t, k, ALPHA, BETA, GAMMA, DELTA,
                 phi_0_t, phi_l_t, psi_x, static_cast<NumDiff>(boundary),
                 [&] (const ublas::vector<ldbl> &u_k) -> void
@@ -105,6 +106,11 @@ int main(int argc, const char *argv[])
     }
 
     return 0;
+}
+
+static constexpr ldbl f_x_t(const ldbl &, const ldbl &) noexcept
+{
+    return 0.0;
 }
 
 static constexpr ldbl phi_0_t(const ldbl &a, const ldbl &b, const ldbl &c,
