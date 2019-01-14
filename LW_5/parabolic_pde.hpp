@@ -109,7 +109,7 @@ ublas::vector<T> explicit_fdm(const T a, const T b, const T c,
             u_k[j] = (sigma + b * tau / (2.0 * h)) * u_k_minus_1[j + 1] +
                 (1.0 - 2.0 * sigma + c * tau) * u_k_minus_1[j] +
                 (sigma - b * tau / (2.0 * h)) * u_k_minus_1[j - 1] +
-                f_x_t(j * h, k * tau);
+                tau * f_x_t(j * h, k * tau);
         }
         switch (boundary)
         {
@@ -207,7 +207,7 @@ ublas::vector<T> implicit_fdm(const T a, const T b, const T c,
             &u_k_minus_1 = w_h_tau[(k - 1) % TWO];
         for (std::size_t j = 1; j < n_upper; ++j)
         {
-            d_j[j] = -u_k_minus_1[j] - f_x_t(j * h, k * tau);
+            d_j[j] = -u_k_minus_1[j] - tau * f_x_t(j * h, k * tau);
         }
         switch (boundary)
         {
@@ -302,7 +302,7 @@ ublas::vector<T> crank_nicolson(const T a, const T b, const T c,
             d_j[j] = (THETA - 1.0) * (sigma + b * tau / (2.0 * h)) * u_k_minus_1[j + 1] +
                 ((THETA - 1.0) * (c * tau - 2.0 * sigma) - 1.0) * u_k_minus_1[j] +
                 (THETA - 1.0) * (sigma - b * tau / (2.0 * h)) * u_k_minus_1[j - 1] -
-                f_x_t(j * h, k * tau);
+                tau * f_x_t(j * h, k * tau);
         }
         switch (boundary)
         {
